@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:memora:context-knowledge-v1",
+  "title": "Reviewed knowledge exchange",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "destination",
+    "records",
+    "relations",
+    "sha256"
+  ],
+  "properties": {
+    "format": {
+      "const": "context-knowledge-v1"
+    },
+    "destination": {
+      "type": "string",
+      "minLength": 1
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "title",
+          "description",
+          "body",
+          "sources",
+          "origin",
+          "review"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "not": {
+              "enum": [
+                "Profile",
+                "Task",
+                "Checkpoint",
+                "Memory Event"
+              ]
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "resource"
+              ],
+              "properties": {
+                "resource": {
+                  "type": "string",
+                  "pattern": "^(https?://|urn:)"
+                }
+              }
+            }
+          },
+          "entity_kind": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "observation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "subject",
+              "predicate",
+              "value",
+              "author",
+              "observed_at",
+              "basis"
+            ],
+            "properties": {
+              "subject": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "id"
+                ],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "entity",
+                      "relation"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "predicate": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "value": {},
+              "author": {
+                "type": "string",
+                "minLength": 1
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "basis": {
+                "enum": [
+                  "direct",
+                  "reported",
+                  "inferred"
+                ]
+              },
+              "valid_until": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "external_refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "provider",
+                "instance",
+                "entity_type",
+                "entity_id",
+                "relation"
+              ],
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "instance": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "entity_type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "entity_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "relation": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "observed_revision": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "origin": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "workspace",
+              "revision"
+            ],
+            "properties": {
+              "workspace": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "review": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "by",
+              "at"
+            ],
+            "properties": {
+              "by": {
+                "type": "string",
+                "pattern": "^human:.+"
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "Entity"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "entity_kind"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "Observation"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "observation"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "origin",
+          "target",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "origin": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "target": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

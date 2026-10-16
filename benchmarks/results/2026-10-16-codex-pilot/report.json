@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "study": "context-study-v1",
+    "utc": "2026-10-16T19:57:55.822417+00:00",
+    "backend": "codex",
+    "model": "gpt-6-luna",
+    "effort": "high",
+    "repeats": 1,
+    "seed": 1701,
+    "budget": 12000,
+    "timeout": 180,
+    "conditions": [
+      "none",
+      "plain",
+      "brain",
+      "oracle"
+    ],
+    "tasks": [
+      "preferences",
+      "decision",
+      "handoff",
+      "relations",
+      "change",
+      "expiry",
+      "conflict",
+      "procedure",
+      "business",
+      "inference",
+      "missing",
+      "self-contained"
+    ],
+    "tool_version": "1.4.0",
+    "python": "3.14.6",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "git_head": "7377370e6bff93a53100de8287dae8cb59afca31",
+    "dirty": true,
+    "files_sha256": {
+      "scripts/benchmark_agent.py": "857805dedadb37d1a89eb7603bc0a4bdcd398bdf59356a0a5386f779142df3d5",
+      "benchmarks/context-v1/corpus.json": "ced977f6a9e433350a383c37a55102e7fb83d129658a512395dfd92a6cf8507f",
+      "benchmarks/context-v1/tasks.json": "d06bb3d1fa36d663bf790847b69a9425065b9fc29cc13e794cb8d8d2f9446174",
+      "src/agent_brain/__init__.py": "5f114a985ee9fdbcb13f3ccf42ecca00714e3c7624321f2001b18dd435ee08d3",
+      "src/agent_brain/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "src/agent_brain/bundles.py": "9f562ab85592341547d8f438f45893cd8dd42bbdb3a29fd66579fb89b566006c",
+      "src/agent_brain/cli.py": "084862b0be9fe88f8fe9c43c48271851f56a05e4e25cb072188f51e6e3bc6ca6",
+      "src/agent_brain/codec.py": "5534c67ba38e71c5b7fec0e0ce9dcdc2ab70798f5ea9aac607cbed85f348fae3",
+      "src/agent_brain/compatibility.py": "cf6c29e7201e3d38b52fe76a1180476f97a220e7b24cbb6e0758df8c1c82bb37",
+      "src/agent_brain/context.py": "2bd0c7a53b9c7f8b41212f40d5d8f3e2521662f9099b26902cf906ea80b42468",
+      "src/agent_brain/health.py": "a0bc2d7c6e523c48e642b7f6c13bf007c0606245a7415a9f89d25080d72077ab",
+      "src/agent_brain/index.py": "cd4e715383aa07987b16dcdce813e9e3b69de547aa769ad2f6c4149e549d9dd3",
+      "src/agent_brain/integrations.py": "8faa2400671dafff3eba1dedc2350159bb9aa6efd744b8c41269b8ac358103bb",
+      "src/agent_brain/knowledge.py": "c735c7825ede07b6b51ccfccc8ba1d523b0326cd1e70af2d99c7e639cbcb5870",
+      "src/agent_brain/knowledge_commands.py": "cadb65dc95e3c93820e089a29fde4826d2e2cbc5c01ce25a132dea661c65a991",
+      "src/agent_brain/language.py": "525de53376eaf14dfed04c764f926f32cd0bfc96c04f752682a30a4bbf77fc16",
+      "src/agent_brain/live.py": "37aab37d366e66b8c4c151f6f6e1674a4e1756f2a31825cc890cd61f6cecf650",
+      "src/agent_brain/mcp_server.py": "f4f769d3f148c543442077bcaa4786711b9b2d01aadaa0c8bb49085480a6c647",
+      "src/agent_brain/registration.py": "107c5b9b13849bb1f1665c9b1d00d5992ed6adc4a3af6a01cc9edc704dc826b0",
+      "src/agent_brain/remote.py": "5c88fa0ff3bedd0963b8d8272b5546e504e49a0664c69a127a61848facdad97e",
+      "src/agent_brain/semantic.py": "3d3ac115cf64735f2ef19f79b3c8b2922d7c1cd71bee67f8e230acbc24cb3285",
+      "src/agent_brain/service.py": "7ad9ae7d1f7c5b96b7abd741d74138b7a4258c45db9dfead99ca02b94fe45bff",
+      "src/agent_brain/sessions.py": "42ec471cd8ffc7ad3dca44d678ca22182ebe7de72b1962361dbade43a5ee6816",
+      "src/agent_brain/store.py": "f1d2d92af5bb8f41da6538464176b358a384c91c0aae5d27b8d9f4f08389e290",
+      "src/agent_brain/viewer.py": "860fe19be1ac5abae99436fecfa92ff161045f7e23247bebc712d22ab35a0adc"
+    },
+    "limits": [
+      "Synthetic context questions, not repository implementation tasks.",
+      "Queries and answer rubrics are fixed in advance and visible to maintainers.",
+      "Gold answers are never sent to the agent; context comes from fixture notes only.",
+      "The runner supplies context. It does not test autonomous CLI discovery or memory capture.",
+      "One response per task; questions receive no reply. No human time savings are measured.",
+      "No monetary cost estimate. Token counts can include cache hits.",
+      "Plain context sends the whole corpus without the Agent Brain byte limit.",
+      "Fixture setup and indexing time are reported separately from per-task time."
+    ],
+    "agent_version": "codex-cli 0.162.0-alpha.17.2",
+    "isolation": "Fresh ephemeral sessions; user config and project docs off; tools off; unexpected tool events reject the sample.",
+    "fixture_setup_seconds": 0.11923783307429403
+  },
+  "summary": {
+    "none": {
+      "runs": 12,
+      "errors": 0,
+      "answer_accuracy": 0.2777777777777778,
+      "grounded_task_success": 0.16666666666666666,
+      "incorrect_answer_rate": 0,
+      "unknown_accuracy": 1,
+      "invalid_citation_rate": 0,
+      "questions_per_run": 0.5833333333333334,
+      "mean_context_bytes": 0,
+      "retrieval_recall": 0.0,
+      "mean_total_seconds": 4.456354204924234,
+      "median_total_seconds": 4.24331039597746,
+      "mean_input_tokens": 10464.416666666666,
+      "mean_cached_input_tokens": 704,
+      "mean_output_tokens": 116.41666666666667
+    },
+    "plain": {
+      "runs": 12,
+      "errors": 0,
+      "answer_accuracy": 0.9444444444444444,
+      "grounded_task_success": 0.9166666666666666,
+      "incorrect_answer_rate": 0.07142857142857142,
+      "unknown_accuracy": 1,
+      "invalid_citation_rate": 0.1111111111111111,
+      "questions_per_run": 0,
+      "mean_context_bytes": 4833,
+      "retrieval_recall": 1.0,
+      "mean_total_seconds": 4.293187496659812,
+      "median_total_seconds": 3.9753379799658433,
+      "mean_input_tokens": 11640.916666666666,
+      "mean_cached_input_tokens": 704,
+      "mean_output_tokens": 97.75
+    },
+    "brain": {
+      "runs": 12,
+      "errors": 0,
+      "answer_accuracy": 1.0,
+      "grounded_task_success": 1.0,
+      "incorrect_answer_rate": 0,
+      "unknown_accuracy": 1,
+      "invalid_citation_rate": 0,
+      "questions_per_run": 0,
+      "mean_context_bytes": 2507,
+      "retrieval_recall": 1.0,
+      "mean_total_seconds": 4.535757093680634,
+      "median_total_seconds": 4.096965500502847,
+      "mean_input_tokens": 11010.166666666666,
+      "mean_cached_input_tokens": 0,
+      "mean_output_tokens": 114
+    },
+    "oracle": {
+      "runs": 12,
+      "errors": 0,
+      "answer_accuracy": 0.9444444444444444,
+      "grounded_task_success": 0.9166666666666666,
+      "incorrect_answer_rate": 0.07142857142857142,
+      "unknown_accuracy": 1,
+      "invalid_citation_rate": 0,
+      "questions_per_run": 0,
+      "mean_context_bytes": 252.16666666666666,
+      "retrieval_recall": 1.0,
+      "mean_total_seconds": 3.995289524522377,
+      "median_total_seconds": 4.0210441459785216,
+      "mean_input_tokens": 10519.5,
+      "mean_cached_input_tokens": 704,
+      "mean_output_tokens": 89.66666666666667
+    }
+  },
+  "paired_accuracy": {
+    "none": {
+      "tasks": 12,
+      "mean_task_accuracy_delta": 0.5833333333333334,
+      "bootstrap_95_percent": [
+        0.25,
+        0.8333333333333334
+      ],
+      "unit": "task, with repetitions averaged before resampling",
+      "limit": "Descriptive interval for this fixed synthetic fixture; not a population claim."
+    },
+    "plain": {
+      "tasks": 12,
+      "mean_task_accuracy_delta": 0.041666666666666664,
+      "bootstrap_95_percent": [
+        0.0,
+        0.125
+      ],
+      "unit": "task, with repetitions averaged before resampling",
+      "limit": "Descriptive interval for this fixed synthetic fixture; not a population claim."
+    },
+    "oracle": {
+      "tasks": 12,
+      "mean_task_accuracy_delta": 0.041666666666666664,
+      "bootstrap_95_percent": [
+        0.0,
+        0.125
+      ],
+      "unit": "task, with repetitions averaged before resampling",
+      "limit": "Descriptive interval for this fixed synthetic fixture; not a population claim."
+    }
+  }
+}

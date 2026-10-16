@@ -1,0 +1,2926 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Memora</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f8fa;
+        --panel: #fff;
+        --line: #d4dae0;
+        --ink: #394b59;
+        --heading: #10161a;
+        --muted: #5c7080;
+        --accent: #137cbd;
+        --accent-soft: #edf5fb;
+        --inset: #edf0f2;
+        --edge: #b4c2cc;
+        --success: #0f9960;
+        --warning: #ad6800;
+        --danger: #c23030;
+        --shadow: 0 1px 3px #10161a0a;
+        font:
+          13px/1.5 Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      [data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #182026;
+        --panel: #202b33;
+        --line: #394b59;
+        --ink: #d8e1e8;
+        --heading: #f5f8fa;
+        --muted: #a7b6c2;
+        --accent: #48aff0;
+        --accent-soft: #253e50;
+        --inset: #141a1f;
+        --edge: #526675;
+        --success: #3dcc91;
+        --warning: #ffb366;
+        --danger: #ff7373;
+        --shadow: 0 1px 3px #0003;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+        height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        display: grid;
+        grid-template-columns: 48px 200px minmax(0, 1fr);
+        grid-template-rows: 44px minmax(0, 1fr);
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--panel);
+        min-height: 30px;
+        padding: 5px 9px;
+      }
+      button {
+        cursor: pointer;
+        line-height: 1.3;
+      }
+      button:hover {
+        background: var(--inset);
+        border-color: var(--muted);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      button[aria-pressed="true"],
+      button[aria-selected="true"] {
+        color: var(--accent);
+        background: var(--accent-soft);
+        border-color: var(--accent);
+      }
+      .primary {
+        color: #fff;
+        border-color: #137cbd;
+        background: #137cbd;
+      }
+      .primary:hover {
+        background: #106ba3;
+        color: #fff;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible,
+      a:focus-visible,
+      summary:focus-visible,
+      canvas:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      input,
+      select,
+      textarea {
+        max-width: 100%;
+        min-width: 0;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 110px;
+        line-height: 1.6;
+      }
+      a {
+        color: var(--accent);
+      }
+      h1,
+      h2,
+      h3 {
+        color: var(--heading);
+      }
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.4px;
+      }
+      h2 {
+        font-size: 17px;
+        line-height: 1.4;
+        margin: 0 0 12px;
+      }
+      h3 {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 20px 0 8px;
+      }
+      p {
+        margin: 8px 0 12px;
+      }
+      small,
+      .muted {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .mono {
+        font-family: "SF Mono", Consolas, monospace;
+      }
+      .topbar {
+        grid-column: 1/-1;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 0 16px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        z-index: 5;
+      }
+      .brand {
+        color: var(--accent);
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .breadcrumb {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .mobile-space {
+        display: none;
+      }
+      .topbar-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      #time {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      #time::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 6px;
+        background: var(--success);
+        border-radius: 50%;
+      }
+      .topbar button {
+        min-height: 27px;
+      }
+      .icon-button {
+        width: 30px;
+        padding: 4px;
+        display: inline-grid;
+        place-items: center;
+      }
+      svg.icon {
+        width: 17px;
+        height: 17px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .rail {
+        grid-column: 1;
+        grid-row: 2;
+        background: var(--panel);
+        border-right: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        padding: 12px 0;
+      }
+      .rail button {
+        border: 0;
+        background: transparent;
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        padding: 6px;
+        color: var(--muted);
+      }
+      .rail button.active {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .rail .rail-bottom {
+        margin-top: auto;
+      }
+      .sidebar {
+        grid-column: 2;
+        grid-row: 2;
+        padding: 20px 12px;
+        background: var(--panel);
+        border-right: 1px solid var(--line);
+        overflow: auto;
+      }
+      .sidebar-heading {
+        padding: 0 8px;
+        margin-bottom: 20px;
+      }
+      .sidebar-heading strong {
+        display: block;
+        color: var(--heading);
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+      .sidebar nav {
+        display: grid;
+        gap: 4px;
+        margin: 9px 0 22px;
+      }
+      .sidebar nav button {
+        border: 0;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        text-align: left;
+        padding: 8px;
+        width: 100%;
+      }
+      .sidebar nav button[aria-pressed="true"] {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .nav-count {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      #space-control {
+        display: grid;
+        gap: 5px;
+        padding: 0 8px 16px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      #space {
+        width: 100%;
+      }
+      .sidebar-note {
+        padding: 12px 8px;
+        border-top: 1px solid var(--line);
+        margin-top: 20px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      #legend {
+        display: grid;
+        gap: 5px;
+      }
+      #legend .badge {
+        border: 0;
+        padding: 2px 8px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+      }
+      .dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+      .content {
+        min-width: 0;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto auto auto minmax(0, 1fr);
+        overflow: hidden;
+      }
+      .page-heading {
+        padding: 22px 24px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .page-heading p {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 4px 0 0;
+      }
+      .page-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        padding: 0 24px 18px;
+      }
+      .metric {
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--panel);
+        padding: 12px 14px;
+        box-shadow: var(--shadow);
+      }
+      .metric .value {
+        font-size: 23px;
+        line-height: 1.4;
+        font-weight: 600;
+        color: var(--heading);
+        font-variant-numeric: tabular-nums;
+      }
+      .metric .value small {
+        font-size: 11px;
+        font-weight: 400;
+        padding-left: 5px;
+      }
+      .metric .eyebrow {
+        font-size: 10px;
+      }
+      .filters {
+        display: grid;
+        grid-template-columns: minmax(160px, 1.8fr) repeat(
+            5,
+            minmax(90px, 1fr)
+          );
+        gap: 10px;
+        padding: 0 24px 14px;
+      }
+      .filters label {
+        display: grid;
+        gap: 4px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .filters input,
+      .filters select {
+        width: 100%;
+        color: var(--ink);
+      }
+      #quickView {
+        display: none;
+      }
+      .filter-footer {
+        grid-column: 1/-1;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-height: 22px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .filter-footer button {
+        min-height: 22px;
+        padding: 2px 7px;
+        font-size: 11px;
+      }
+      .filter-chip {
+        border-radius: 3px;
+        background: var(--inset);
+      }
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 350px;
+        min-height: 0;
+        border-top: 1px solid var(--line);
+      }
+      .stage {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        background-color: var(--bg);
+        background-image: radial-gradient(var(--line) 0.7px, transparent 0.7px);
+        background-size: 22px 22px;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+        cursor: grab;
+      }
+      canvas:active {
+        cursor: grabbing;
+      }
+      .toolbar {
+        position: absolute;
+        z-index: 2;
+        top: 12px;
+        left: 14px;
+        right: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 5px;
+      }
+      .toolbar button {
+        font-size: 12px;
+        min-height: 29px;
+        box-shadow: var(--shadow);
+      }
+      .toolbar .zoom-tools {
+        display: flex;
+        gap: 4px;
+        margin-left: auto;
+      }
+      #status {
+        position: absolute;
+        bottom: 10px;
+        left: 14px;
+        right: 14px;
+        font-size: 10px;
+        color: var(--muted);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        padding: 6px 9px;
+        border-radius: 4px;
+        pointer-events: none;
+      }
+      #view-context {
+        position: absolute;
+        top: 52px;
+        left: 14px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      #tooltip {
+        position: absolute;
+        z-index: 4;
+        pointer-events: none;
+        max-width: 260px;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 4px;
+        box-shadow: var(--shadow);
+        font-size: 12px;
+      }
+      .inspector {
+        background: var(--panel);
+        border-left: 1px solid var(--line);
+        min-height: 0;
+        overflow: auto;
+        overflow-wrap: anywhere;
+      }
+      .inspector-tools {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        padding: 8px 12px;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+      }
+      .inspector-tools .eyebrow {
+        margin-right: auto;
+      }
+      .inspector-tools button {
+        font-size: 11px;
+        min-height: 25px;
+        padding: 3px 7px;
+      }
+      #details {
+        padding: 20px;
+      }
+      #details p {
+        white-space: pre-wrap;
+      }
+      #details form label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      #details form label input,
+      #details form label textarea,
+      #details form label select {
+        display: block;
+        margin-top: 5px;
+        color: var(--ink);
+      }
+      #details form button[type="submit"] {
+        background: #137cbd;
+        border-color: #137cbd;
+        color: #fff;
+        margin: 8px 0;
+      }
+      #details form [role="status"] {
+        font-size: 12px;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 10px;
+        border: 1px solid var(--line);
+        background: var(--inset);
+        border-radius: 3px;
+        padding: 2px 6px;
+        margin: 0 4px 5px 0;
+      }
+      .badge.warning {
+        color: var(--warning);
+      }
+      .badge.success {
+        color: var(--success);
+      }
+      .notice {
+        border-left: 3px solid var(--accent);
+        padding: 8px 10px;
+        background: var(--accent-soft);
+        margin: 12px 0;
+        font-size: 12px;
+      }
+      .notice.warning {
+        border-color: var(--warning);
+        background: var(--inset);
+      }
+      .note-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+      .note-actions button {
+        font-size: 11px;
+      }
+      .inspector-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--line);
+        margin: 18px -20px 16px;
+        padding: 0 14px;
+        gap: 3px;
+      }
+      .inspector-tabs button {
+        font-size: 11px;
+        padding: 8px 6px;
+        background: transparent;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+      }
+      .inspector-tabs button[aria-selected="true"] {
+        border-bottom-color: var(--accent);
+        color: var(--accent);
+      }
+      .note-content {
+        font-size: 13px;
+        line-height: 1.75;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      .note-content h1 {
+        font-size: 21px;
+        margin-top: 18px;
+      }
+      .note-content h2 {
+        margin-top: 18px;
+      }
+      .note-content pre,
+      pre.projection {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: var(--inset);
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        font:
+          11px/1.6 "SF Mono",
+          Consolas,
+          monospace;
+      }
+      .note-content code {
+        font-size: 11px;
+        background: var(--inset);
+        padding: 1px 3px;
+      }
+      .note-content blockquote {
+        border-left: 2px solid var(--line);
+        margin: 12px 0;
+        padding-left: 12px;
+        color: var(--muted);
+      }
+      .note-content ul,
+      .note-content ol {
+        padding-left: 22px;
+      }
+      .note-content img {
+        max-width: 100%;
+      }
+      .note-content table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .note-path {
+        display: block;
+        font-size: 10px;
+        color: var(--muted);
+        margin: 10px 0;
+      }
+      .relation {
+        margin: 8px 0;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .relation button {
+        min-width: 0;
+        max-width: 210px;
+        font-size: 12px;
+        text-align: left;
+      }
+      .source {
+        display: block;
+        margin: 8px 0;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      .event {
+        border-left: 2px solid var(--line);
+        padding-left: 12px;
+        margin: 14px 0;
+      }
+      .event p {
+        font-size: 12px;
+      }
+      .help-panels {
+        border-top: 1px solid var(--line);
+        padding: 12px 20px;
+      }
+      .help-panels summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 12px;
+        padding: 5px 0;
+      }
+      .help-panels p {
+        font-size: 12px;
+      }
+      .guide-mark {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-right: 6px;
+        background: var(--accent);
+      }
+      .guide-mark.cluster {
+        border-radius: 50%;
+      }
+      .guide-mark.entity {
+        border-radius: 2px;
+      }
+      .guide-edge {
+        display: inline-block;
+        width: 20px;
+        margin-right: 6px;
+        vertical-align: 3px;
+        border-top: 1px solid var(--muted);
+      }
+      #list {
+        position: absolute;
+        z-index: 1;
+        inset: 53px 0 35px;
+        overflow: auto;
+        background: var(--panel);
+        padding: 0 12px;
+      }
+      #list table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        text-align: left;
+        font-size: 12px;
+      }
+      #list th:nth-child(1) {
+        width: 28%;
+      }
+      #list th:nth-child(2) {
+        width: 12%;
+      }
+      #list th:nth-child(3),
+      #list th:nth-child(4) {
+        width: 19%;
+      }
+      #list th:nth-child(5) {
+        width: 14%;
+      }
+      #list th:nth-child(6) {
+        width: 8%;
+      }
+      #list th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--panel);
+        font-size: 10px;
+        color: var(--muted);
+      }
+      th,
+      td {
+        padding: 10px 6px;
+        border-bottom: 1px solid var(--line);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #list th button {
+        padding: 3px 0;
+        border: 0;
+        background: transparent;
+        font-size: 10px;
+        min-height: 22px;
+      }
+      #list td button {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border: 0;
+        color: var(--accent);
+        background: transparent;
+        font-size: 12px;
+        padding: 3px 0;
+        text-align: left;
+      }
+      #list tr.is-selected {
+        background: var(--accent-soft);
+      }
+      .list-pager {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        padding: 10px 0;
+        position: sticky;
+        bottom: 0;
+        background: var(--panel);
+        font-size: 11px;
+      }
+      .list-pager button {
+        font-size: 11px;
+      }
+      #empty {
+        position: absolute;
+        inset: 100px 20px auto;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      @media (min-width: 1600px) {
+        .workspace {
+          grid-template-columns: minmax(0, 1fr) 400px;
+        }
+      }
+      @media (max-width: 1150px) {
+        body {
+          grid-template-columns: 44px 166px minmax(0, 1fr);
+        }
+        .workspace {
+          grid-template-columns: minmax(0, 1fr) 320px;
+        }
+        .filters {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .metrics,
+        .filters {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+        .page-heading {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+      }
+      @media (max-width: 850px) {
+        #quickView {
+          display: block;
+        }
+        body {
+          height: auto;
+          min-height: 100dvh;
+          grid-template-columns: 44px minmax(0, 1fr);
+          grid-template-rows: 44px auto;
+          overflow: auto;
+        }
+        .topbar {
+          padding: 0 10px;
+          gap: 10px;
+        }
+        .topbar #time {
+          display: none;
+        }
+        .rail {
+          position: sticky;
+          top: 0;
+          height: calc(100dvh - 44px);
+        }
+        .sidebar {
+          display: none;
+        }
+        .content {
+          grid-column: 2;
+          grid-row: 2;
+          overflow: visible;
+          display: block;
+        }
+        .workspace {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .stage {
+          height: 54vh;
+          min-height: 380px;
+        }
+        .inspector {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          min-height: 350px;
+        }
+        .page-heading {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 18px 16px 14px;
+        }
+        .page-actions {
+          width: 100%;
+        }
+        .page-actions button {
+          font-size: 11px;
+        }
+        .metrics {
+          padding: 0 16px 16px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+        .metric {
+          padding: 9px 12px;
+        }
+        .metric .value {
+          font-size: 20px;
+        }
+        .filters {
+          padding: 0 16px 12px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+        .filters label:first-child {
+          grid-column: 1/-1;
+        }
+        .toolbar {
+          left: 10px;
+          right: 10px;
+        }
+        .toolbar button {
+          font-size: 11px;
+          padding: 5px 7px;
+        }
+        .toolbar .zoom-tools {
+          margin-left: 0;
+        }
+        .breadcrumb {
+          font-size: 11px;
+        }
+        .mobile-space:not([hidden]) {
+          display: block !important;
+          max-width: 110px;
+          font-size: 11px;
+        }
+        .inspector-tools {
+          top: 0;
+        }
+        .brand {
+          font-size: 13px;
+        }
+      }
+      @media (max-width: 600px) {
+        .breadcrumb {
+          display: none;
+        }
+        #list th:nth-child(3),
+        #list td:nth-child(3),
+        #list th:nth-child(4),
+        #list td:nth-child(4),
+        #list th:nth-child(6),
+        #list td:nth-child(6) {
+          display: none;
+        }
+        #list th:nth-child(1) {
+          width: 60%;
+        }
+        #list th:nth-child(2) {
+          width: 20%;
+        }
+        #list th:nth-child(5) {
+          width: 20%;
+        }
+        #details {
+          padding: 16px;
+        }
+        .inspector-tabs {
+          margin-left: -16px;
+          margin-right: -16px;
+        }
+        .topbar-actions {
+          gap: 5px;
+        }
+        .metric .eyebrow {
+          font-size: 9px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <span class="brand">Memora</span
+      ><span class="breadcrumb">/ Knowledge explorer</span>
+      <div class="topbar-actions">
+        <select
+          id="mobile-space"
+          class="mobile-space"
+          aria-label="Memory space"
+          hidden
+        ></select
+        ><span id="time"></span
+        ><button
+          id="themeToggle"
+          class="icon-button"
+          aria-label="Switch to dark theme"
+          title="Switch theme"
+        >
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z" />
+          </svg>
+        </button>
+      </div>
+    </header>
+    <nav class="rail" aria-label="Main navigation">
+      <button
+        id="navGraph"
+        class="active"
+        aria-label="Graph view"
+        title="Graph view"
+      >
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="6" cy="6" r="3" />
+          <circle cx="18" cy="8" r="3" />
+          <circle cx="10" cy="19" r="3" />
+          <path d="m9 6 6 1M7 9l2 7m3 1 4-6" />
+        </svg>
+      </button>
+      <button id="navList" aria-label="List view" title="List view">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <path d="M3 9h18M8 9v11M3 14h18" />
+        </svg>
+      </button>
+      <button id="navCapture" aria-label="Add knowledge" title="Add knowledge">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+      <button
+        id="navHelp"
+        class="rail-bottom"
+        aria-label="Graph help"
+        title="Graph help"
+      >
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 5m0 3v.2" />
+        </svg>
+      </button>
+    </nav>
+    <section class="sidebar" aria-label="Knowledge navigation">
+      <div class="sidebar-heading">
+        <strong>Your knowledge</strong
+        ><span class="muted">Context that stays with you.</span>
+      </div>
+      <label id="space-control" hidden
+        >Memory space<select id="space"></select
+      ></label>
+      <div class="eyebrow" style="padding: 0 8px">Explore</div>
+      <nav aria-label="Knowledge views">
+        <button data-view="all" aria-pressed="true">
+          All knowledge <span id="count-all" class="nav-count"></span>
+        </button>
+        <button data-view="review" aria-pressed="false">
+          Needs review <span id="count-review" class="nav-count"></span>
+        </button>
+        <button data-view="stale" aria-pressed="false">
+          Needs a source check <span id="count-stale" class="nav-count"></span>
+        </button>
+        <button data-view="inferred" aria-pressed="false">
+          Agent inferences <span id="count-inferred" class="nav-count"></span>
+        </button>
+        <button data-view="approved" aria-pressed="false">
+          Approved to share <span id="count-approved" class="nav-count"></span>
+        </button>
+      </nav>
+      <h3 id="legendTitle" class="eyebrow" style="padding: 0 8px">
+        Entity types
+      </h3>
+      <div id="legend"></div>
+      <div class="sidebar-note">
+        <strong>Local workspace</strong>
+        <p>Markdown is the source of truth. Sharing requires your review.</p>
+        <span>Press / to search · Esc to clear selection</span>
+      </div>
+    </section>
+    <section class="content" aria-label="Knowledge explorer">
+      <div class="page-heading">
+        <div>
+          <h1>Knowledge explorer</h1>
+          <p>Find context. Follow connections. Keep the evidence.</p>
+        </div>
+        <div class="page-actions">
+          <button id="export-knowledge" hidden>Export reviewed knowledge</button
+          ><button id="add-knowledge" class="primary" hidden>
+            + Add knowledge
+          </button>
+        </div>
+      </div>
+      <section class="metrics" aria-label="Memory overview">
+        <div class="metric">
+          <div class="eyebrow">Knowledge notes</div>
+          <div id="metric-notes" class="value">0</div>
+        </div>
+        <div class="metric">
+          <div class="eyebrow">Connections</div>
+          <div id="metric-links" class="value">0</div>
+        </div>
+        <div class="metric">
+          <div class="eyebrow">With sources</div>
+          <div id="metric-sources" class="value">0</div>
+        </div>
+        <div class="metric">
+          <div class="eyebrow">Needs review</div>
+          <div id="metric-review" class="value">0</div>
+        </div>
+      </section>
+      <section class="filters" aria-label="Graph filters">
+        <label
+          >Search<input
+            id="query"
+            type="search"
+            placeholder="Find a note"
+            autocomplete="off"
+        /></label>
+        <label
+          >Project<select id="project">
+            <option value="">All projects</option>
+          </select></label
+        >
+        <label
+          >Repository<select id="repository">
+            <option value="">All repositories</option>
+          </select></label
+        >
+        <label
+          >Type<select id="type">
+            <option value="">All types</option>
+          </select></label
+        >
+        <label
+          >State<select id="state">
+            <option value="">All states</option>
+          </select></label
+        >
+        <label
+          >Minimum score<select id="score">
+            <option value="0">All scores</option>
+            <option>25</option>
+            <option>50</option>
+            <option>75</option>
+            <option>90</option>
+            <option>100</option>
+          </select></label
+        >
+        <div class="filter-footer">
+          <span id="filter-count"></span>
+          <div id="filter-chips"></div>
+          <button id="clearFilters">Reset filters</button
+          ><select id="quickView" aria-label="Knowledge view">
+            <option value="all">All knowledge</option>
+            <option value="review">Needs review</option>
+            <option value="stale">Needs a source check</option>
+            <option value="inferred">Agent inferences</option>
+            <option value="approved">Approved to share</option>
+          </select>
+        </div>
+      </section>
+      <main class="workspace">
+        <section class="stage" aria-label="Knowledge graph">
+          <canvas
+            id="graph"
+            aria-label="Knowledge graph. Use the list view for keyboard access."
+          ></canvas>
+          <div class="toolbar">
+            <button id="clusters" aria-pressed="true">Clusters</button
+            ><button id="expand">Expand</button
+            ><button id="listToggle" aria-pressed="false">List</button
+            ><button id="zoomIn" aria-label="Zoom in">+</button
+            ><button id="zoomOut" aria-label="Zoom out">−</button
+            ><button id="reset">Fit graph</button>
+          </div>
+          <div id="view-context"></div>
+          <div id="tooltip" hidden></div>
+          <div id="list" hidden></div>
+          <div id="empty" hidden></div>
+          <output id="status" aria-live="polite"></output>
+        </section>
+        <aside class="inspector" aria-label="Knowledge inspector">
+          <div class="inspector-tools">
+            <span class="eyebrow">Inspector</span
+            ><button id="selectionBack" aria-label="Previous note" disabled>
+              ←</button
+            ><button id="selectionForward" aria-label="Next note" disabled>
+              →</button
+            ><button id="closeInspector" aria-label="Clear selection">✕</button>
+          </div>
+          <div id="details">
+            <h2>Your memory</h2>
+            <p>Select a cluster or a note.</p>
+            <p class="muted">
+              Read the content, sources and connections in one place.
+            </p>
+          </div>
+          <div class="help-panels">
+            <details id="graphGuide">
+              <summary>Graph guide</summary>
+              <p>
+                <span class="guide-mark cluster"></span
+                ><strong>Cluster:</strong> a group of notes. The label shows the
+                project, repository, or Shared scope. The number is the note
+                count.
+              </p>
+              <p>
+                <span class="guide-mark entity"></span
+                ><strong>Node:</strong> one memory entity. Its color shows its
+                type. Select it to read its source, evidence, history, and
+                links.
+              </p>
+              <p>
+                <span class="guide-edge"></span><strong>Arrow:</strong> a typed
+                relation. Its direction shows which entity points to the other.
+                Select a node to show nearby relation labels.
+              </p>
+              <p>
+                <strong>Navigate:</strong> select a cluster, then choose Open
+                cluster. Use Expand to show matching entities. Drag to pan, use
+                the wheel or +/- buttons to zoom, and use Fit graph to center
+                visible items.
+              </p>
+              <p>
+                <strong>Filter:</strong> project, repository, type, state,
+                score, and search change the visible graph and list. Search also
+                checks tags.
+              </p>
+            </details>
+            <details id="memorySessions">
+              <summary>Session receipts</summary>
+              <p>These calls show returned context, not model understanding.</p>
+              <div id="sessionList"></div>
+            </details>
+          </div>
+        </aside>
+      </main>
+    </section>
+    <script id="memora-data" type="application/json">
+      __BRAIN_DATA__
+    </script>
+    <script>
+      "use strict";
+      let data = JSON.parse(document.getElementById("memora-data").textContent),
+        byId = new Map(data.nodes.map((n) => [n.path, n])),
+        types = [];
+      const canvas = document.getElementById("graph"),
+        ctx = canvas.getContext("2d"),
+        $ = (id) => document.getElementById(id);
+      let mode = "clusters",
+        shown = [],
+        links = [],
+        filtered = [],
+        scale = 1,
+        offset = { x: 0, y: 0 },
+        selected = null,
+        listMode = false,
+        page = 0,
+        pageSize = 50,
+        sort = { key: "title", direction: 1 },
+        positions = new Map(),
+        drag = null,
+        refreshInFlight = false,
+        quickView = "all",
+        focusPaths = null,
+        hovered = null,
+        inspectorTab = "note",
+        panelEpoch = 0,
+        navigation = [],
+        navigationIndex = -1,
+        refreshPromise = null;
+      const palette = [
+        "#137cbd",
+        "#7157a3",
+        "#0d805c",
+        "#ad6800",
+        "#c23030",
+        "#00809d",
+        "#7e6654",
+        "#58800d",
+      ];
+      const color = (t) =>
+        ({
+          Entity: "#137cbd",
+          Concept: "#137cbd",
+          Decision: "#7157a3",
+          Document: "#0d805c",
+          Fact: "#ad6800",
+          Idea: "#c23030",
+          Procedure: "#00809d",
+          Project: "#7157a3",
+          Repository: "#137cbd",
+          Source: "#00809d",
+          System: "#137cbd",
+          Task: "#ad6800",
+          Profile: "#7157a3",
+          Observation: "#0d805c",
+          Checkpoint: "#7e6654",
+          Relation: "#58800d",
+        })[t] ||
+        palette[
+          [...t].reduce((v, c) => v + c.charCodeAt(0), 0) % palette.length
+        ];
+      const themeColor = (name) =>
+        getComputedStyle(document.documentElement)
+          .getPropertyValue(name)
+          .trim();
+      function setTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        $("themeToggle").setAttribute(
+          "aria-label",
+          theme === "light" ? "Switch to dark theme" : "Switch to light theme",
+        );
+        try {
+          localStorage.setItem("memora-theme", theme);
+        } catch {}
+        draw();
+      }
+      function matchesView(n, view) {
+        return (
+          view === "all" ||
+          (view === "review" &&
+            ["provisional", "disputed"].includes(n.state)) ||
+          (view === "stale" && n.stale) ||
+          (view === "inferred" && n.observation?.basis === "inferred") ||
+          (view === "approved" && n.publication?.state === "approved")
+        );
+      }
+      function overview() {
+        const notes = data.nodes.filter((n) => n.id);
+        $("metric-notes").textContent = notes.length.toLocaleString();
+        $("metric-links").textContent = data.edges.length.toLocaleString();
+        $("metric-sources").textContent = notes
+          .filter((n) => n.sources.length)
+          .length.toLocaleString();
+        $("metric-review").textContent = notes
+          .filter((n) => matchesView(n, "review"))
+          .length.toLocaleString();
+        for (const view of ["all", "review", "stale", "inferred", "approved"])
+          $("count-" + view).textContent = data.nodes.filter((n) =>
+            matchesView(n, view),
+          ).length;
+      }
+      function filterSummary() {
+        $("filter-count").textContent =
+          filtered.length.toLocaleString() + " matching notes";
+        $("filter-chips").replaceChildren();
+        for (const id of [
+          "query",
+          "project",
+          "repository",
+          "type",
+          "state",
+          "score",
+        ]) {
+          const input = $(id);
+          if (!input.value || (id === "score" && input.value === "0")) continue;
+          const chip = el(
+            "button",
+            id === "query"
+              ? "Search: " + input.value
+              : input.options[input.selectedIndex].textContent,
+            $("filter-chips"),
+            "filter-chip",
+          );
+          chip.setAttribute("aria-label", "Clear " + id + " filter");
+          chip.onclick = () => {
+            input.value = id === "score" ? "0" : "";
+            apply();
+          };
+        }
+        for (const button of document.querySelectorAll("[data-view]"))
+          button.setAttribute(
+            "aria-pressed",
+            String(button.dataset.view === quickView),
+          );
+        $("quickView").value = quickView;
+      }
+      function showList(value) {
+        listMode = value;
+        $("list").hidden = !value;
+        canvas.hidden = value;
+        $("listToggle").setAttribute("aria-pressed", String(value));
+        $("navList").classList.toggle("active", value);
+        $("navGraph").classList.toggle("active", !value);
+        $("empty").hidden = shown.length > 0 || value;
+        if (value) renderList();
+        else {
+          const dpr = devicePixelRatio || 1;
+          if (
+            canvas.width !== Math.round(canvas.clientWidth * dpr) ||
+            canvas.height !== Math.round(canvas.clientHeight * dpr)
+          )
+            resize();
+          else draw();
+        }
+      }
+      function rememberSelection(path) {
+        if (navigation[navigationIndex] !== path) {
+          navigation = navigation.slice(0, navigationIndex + 1);
+          navigation.push(path);
+          navigationIndex = navigation.length - 1;
+        }
+        $("selectionBack").disabled = navigationIndex < 1;
+        $("selectionForward").disabled =
+          navigationIndex >= navigation.length - 1;
+      }
+      function preparePanel(mode = "") {
+        panelEpoch++;
+        const panel = $("details");
+        panel.replaceChildren();
+        panel.dataset.mode = mode;
+        return panel;
+      }
+      async function readFull(n, area) {
+        try {
+          const response = await fetch(
+            apiPath("/api/note?path=" + encodeURIComponent(n.path)),
+          );
+          const full = await response.json();
+          if (!response.ok)
+            throw new Error(full.error || "The note could not be loaded.");
+          if (selected !== n.path || !area.isConnected) return;
+          area.replaceChildren();
+          if (typeof full.html === "string") {
+            area.innerHTML = full.html;
+            for (const anchor of area.querySelectorAll("a")) {
+              let url;
+              try {
+                url = new URL(anchor.getAttribute("href"), location.href);
+              } catch {
+                anchor.removeAttribute("href");
+                continue;
+              }
+              if (!["https:", "http:"].includes(url.protocol)) {
+                anchor.removeAttribute("href");
+                continue;
+              }
+              let notePath;
+              try {
+                notePath = decodeURIComponent(url.pathname);
+              } catch {
+                notePath = url.pathname;
+              }
+              if (url.origin === location.origin && byId.has(notePath)) {
+                anchor.href = "#";
+                anchor.onclick = (event) => {
+                  event.preventDefault();
+                  select(byId.get(notePath));
+                };
+                continue;
+              }
+              anchor.target = "_blank";
+              anchor.rel = "noopener noreferrer";
+            }
+          } else el("pre", full.body, area);
+          if (!full.body.trim())
+            el("p", "This note has no content.", area, "muted");
+        } catch (error) {
+          if (area.isConnected)
+            area.textContent = "Cannot read this note: " + error.message;
+        }
+      }
+      async function editForm(n) {
+        const panel = preparePanel("edit");
+        el("h2", "Edit knowledge", panel);
+        el(
+          "p",
+          "Changes keep the note identity and its history. A changed approved note needs a new sharing review.",
+          panel,
+          "muted",
+        );
+        try {
+          const response = await fetch(
+            apiPath("/api/note?path=" + encodeURIComponent(n.path)),
+          );
+          const full = await response.json();
+          if (!response.ok) throw new Error(full.error);
+          if (
+            !panel.isConnected ||
+            selected !== n.path ||
+            panel.dataset.mode !== "edit"
+          )
+            return;
+          const form = el("form", undefined, panel);
+          const title = field(form, "Title", full.metadata.title);
+          const body = field(
+            form,
+            "Content",
+            full.body.split("<!-- brain:relations -->")[0].trim(),
+            null,
+            true,
+          );
+          body.required = false;
+          const reason = field(form, "Reason for this change");
+          submitForm(form, "Save changes", async () => {
+            const saved = await action({
+              action: "edit",
+              key: n.path,
+              revision: full.metadata.brain.revision,
+              title: title.value,
+              body: body.value,
+              reason: reason.value,
+            });
+            select(byId.get(saved.path));
+          });
+          el("button", "Cancel", panel).onclick = () =>
+            select(byId.get(n.path));
+        } catch (error) {
+          el("p", error.message, panel, "notice warning");
+        }
+      }
+      function updateTime() {
+        $("time").textContent =
+          `Live · Updated ${new Date(data.at).toLocaleString()}`;
+      }
+      function el(tag, text, parent, cls) {
+        const x = document.createElement(tag);
+        if (text !== undefined) x.textContent = String(text);
+        if (cls) x.className = cls;
+        if (parent) parent.append(x);
+        return x;
+      }
+      function link(parent, text, url) {
+        if (typeof url !== "string") return;
+        let parsed;
+        try {
+          parsed = new URL(url, location.href);
+        } catch {
+          return;
+        }
+        if (!["http:", "https:", "file:"].includes(parsed.protocol)) return;
+        const a = el("a", text, parent, "source");
+        a.href = parsed.href;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        return a;
+      }
+      function setOptions(id, label, values, keep) {
+        const select = $(id),
+          previous = keep ? select.value : "";
+        select.replaceChildren(new Option(label, ""));
+        for (const [value, title] of values)
+          select.add(new Option(title, value));
+        if ([...select.options].some((option) => option.value === previous))
+          select.value = previous;
+      }
+      function updateControls(keep = false) {
+        types = [...new Set(data.nodes.map((n) => n.type))].sort();
+        setOptions(
+          "project",
+          "All projects",
+          data.nodes
+            .filter((n) => n.type === "Project")
+            .map((n) => [n.path, n.title])
+            .sort((a, b) => a[1].localeCompare(b[1])),
+          keep,
+        );
+        setOptions(
+          "repository",
+          "All repositories",
+          data.nodes
+            .filter((n) => n.type === "Repository")
+            .map((n) => [n.path, n.title])
+            .sort((a, b) => a[1].localeCompare(b[1])),
+          keep,
+        );
+        setOptions(
+          "type",
+          "All types",
+          types.map((value) => [value, value]),
+          keep,
+        );
+        setOptions(
+          "state",
+          "All states",
+          [...new Set(data.nodes.map((n) => n.state))]
+            .sort()
+            .map((value) => [value, value]),
+          keep,
+        );
+        overview();
+        $("legend").replaceChildren();
+        for (const type of types) {
+          const badge = el("span", undefined, $("legend"), "badge");
+          const dot = el("span", undefined, badge, "dot");
+          dot.style.background = color(type);
+          badge.append(document.createTextNode(type));
+        }
+      }
+      function apply(preserveSelection = false) {
+        if (preserveSelection !== true) {
+          preserveSelection = false;
+          focusPaths = null;
+        }
+        const q = $("query").value.trim().toLocaleLowerCase(),
+          p = $("project").value,
+          r = $("repository").value,
+          t = $("type").value,
+          st = $("state").value,
+          min = Number($("score").value);
+        const repositoryInProject = (repository, project) =>
+          byId.get(repository)?.projects.includes(project) || false;
+        filtered = data.nodes.filter((n) => {
+          const labels = [
+            n.title,
+            n.description,
+            n.path,
+            n.type,
+            n.state,
+            ...n.tags,
+            ...n.projects.map((id) => byId.get(id)?.title || id),
+            ...n.repositories.map((id) => byId.get(id)?.title || id),
+            ...n.sources.flatMap((source) => [
+              source.title || "",
+              source.resource,
+            ]),
+          ]
+            .join(" ")
+            .toLocaleLowerCase();
+          const matchesQuery =
+            !q || q.split(/\s+/).every((term) => labels.includes(term));
+          return (
+            matchesView(n, quickView) &&
+            matchesQuery &&
+            (!p ||
+              n.path === p ||
+              n.projects.includes(p) ||
+              n.repositories.some((repository) =>
+                repositoryInProject(repository, p),
+              )) &&
+            (!r || n.path === r || n.repositories.includes(r)) &&
+            (!t || n.type === t) &&
+            (!st || n.state === st) &&
+            n.score >= min
+          );
+        });
+        if (q) mode = "notes";
+        if (!preserveSelection) page = 0;
+        if (!preserveSelection) clearSelection();
+        filterSummary();
+        layout();
+        if (!preserveSelection) fitGraph();
+      }
+      function clearSelection() {
+        selected = null;
+        const panel = preparePanel();
+        el("span", "LOCAL KNOWLEDGE", panel, "eyebrow");
+        el("h2", "Your memory", panel);
+        el("p", "Select a cluster or a note to explore its context.", panel);
+        el(
+          "p",
+          "Read the full content, inspect the sources and follow typed connections. Your working history stays local.",
+          panel,
+          "muted",
+        );
+        if (data.capability)
+          el("button", "Add your first subject", panel, "primary").onclick =
+            () => captureForm();
+        inspectorTab = "note";
+      }
+      function layout(custom) {
+        if (custom) focusPaths = new Set(custom.map((n) => n.path));
+        $("view-context").textContent = focusPaths
+          ? "Focused connections · " + focusPaths.size + " notes"
+          : "";
+        shown = [];
+        links = [];
+        let omittedNodes = 0;
+        const w = canvas.clientWidth,
+          h = canvas.clientHeight;
+        if (mode === "clusters" && !custom) {
+          const clusters = new Map();
+          for (const n of filtered) {
+            const keys = n.projects.length
+              ? n.projects.map((p) => "project:" + p)
+              : n.repositories.length
+                ? n.repositories.map((r) => "repository:" + r)
+                : ["shared:Shared"];
+            for (const key of keys) {
+              if (!clusters.has(key)) clusters.set(key, []);
+              clusters.get(key).push(n);
+            }
+          }
+          const allClusters = [...clusters];
+          omittedNodes = Math.max(0, allClusters.length - 500);
+          shown = allClusters.slice(0, 500).map(([key, notes]) => ({
+            path: key,
+            title: key.startsWith("project:")
+              ? byId.get(key.slice(8))?.title || key.slice(8)
+              : key.startsWith("repository:")
+                ? byId.get(key.slice(11))?.title || key.slice(11)
+                : key.split(":").slice(1).join(":"),
+            type: key.startsWith("project:")
+              ? "Project"
+              : key.startsWith("repository:")
+                ? "Repository"
+                : "Concept",
+            notes,
+            cluster: true,
+          }));
+        } else {
+          const candidates = focusPaths
+            ? filtered.filter((n) => focusPaths.has(n.path))
+            : filtered;
+          shown = candidates.slice(0, 500);
+          omittedNodes = Math.max(0, candidates.length - shown.length);
+          const ids = new Set(shown.map((n) => n.path));
+          links = data.edges
+            .filter((e) => ids.has(e.origin) && ids.has(e.target))
+            .slice(0, 2000);
+        }
+        for (let i = 0; i < shown.length; i++) {
+          const n = shown[i];
+          if (!positions.has(n.path)) {
+            const hash =
+                [...n.path].reduce(
+                  (value, char) =>
+                    Math.imul(value ^ char.charCodeAt(0), 16777619),
+                  2166136261,
+                ) >>> 0,
+              angle = (hash / 4294967296) * Math.PI * 2,
+              minimumGap = n.cluster ? 200 : w < 600 ? 34 : 84,
+              occupied = shown
+                .slice(0, i)
+                .map((previous) => positions.get(previous.path))
+                .filter(Boolean);
+            let point = { x: w / 2, y: h / 2 };
+            for (let attempt = 0; attempt < 600; attempt++) {
+              const turn = angle + attempt * 2.3999632297,
+                radius = attempt === 0 && i === 0 ? 0 : 42 + attempt * 3.5;
+              point = {
+                x: w / 2 + Math.cos(turn) * radius,
+                y: h / 2 + Math.sin(turn) * radius,
+              };
+              if (
+                occupied.every(
+                  (other) =>
+                    Math.hypot(other.x - point.x, other.y - point.y) >=
+                    minimumGap,
+                )
+              )
+                break;
+            }
+            positions.set(n.path, point);
+          }
+        }
+        $("clusters").setAttribute("aria-pressed", String(mode === "clusters"));
+        $("empty").hidden = shown.length > 0 || listMode;
+        $("empty").textContent = data.nodes.length
+          ? "No notes match these filters."
+          : "The memory has no notes. Use memora register or memora capture.";
+        const ids = new Set(shown.map((n) => n.path)),
+          totalEdges = data.edges.filter(
+            (e) => ids.has(e.origin) && ids.has(e.target),
+          ).length;
+        $("status").textContent =
+          `${filtered.length} matching notes · ${shown.length} visible ${mode === "clusters" ? "clusters" : "nodes"} · ${links.length} edges · ${omittedNodes} ${mode === "clusters" ? "clusters" : "nodes"} and ${Math.max(0, totalEdges - links.length)} edges omitted`;
+        renderList();
+        draw();
+        window.brainViewState = {
+          mode,
+          visibleNodes: shown.length,
+          visibleEdges: links.length,
+          matchingNotes: filtered.length,
+          page,
+          live: data.live,
+          positions: Object.fromEntries(
+            shown.map((n) => [n.path, positions.get(n.path)]),
+          ),
+        };
+      }
+      function draw() {
+        const showAllLabels = scale > (canvas.clientWidth < 600 ? 2.5 : 1.8);
+        ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+        ctx.save();
+        ctx.translate(offset.x, offset.y);
+        ctx.scale(scale, scale);
+        ctx.strokeStyle = themeColor("--edge");
+        ctx.fillStyle = themeColor("--muted");
+        ctx.lineWidth = 0.8 / scale;
+        ctx.font = `${10 / Math.max(1, scale)}px system-ui`;
+        for (const e of links) {
+          const a = positions.get(e.origin),
+            b = positions.get(e.target);
+          if (!a || !b) continue;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          const angle = Math.atan2(b.y - a.y, b.x - a.x),
+            end = {
+              x: b.x - 10 * Math.cos(angle),
+              y: b.y - 10 * Math.sin(angle),
+            };
+          ctx.beginPath();
+          ctx.moveTo(end.x, end.y);
+          ctx.lineTo(
+            end.x - 6 * Math.cos(angle - 0.45),
+            end.y - 6 * Math.sin(angle - 0.45),
+          );
+          ctx.lineTo(
+            end.x - 6 * Math.cos(angle + 0.45),
+            end.y - 6 * Math.sin(angle + 0.45),
+          );
+          ctx.closePath();
+          ctx.fill();
+          if (selected === e.origin || selected === e.target || showAllLabels)
+            ctx.fillText(
+              e.kind.replaceAll("_", " "),
+              (a.x + b.x) / 2,
+              (a.y + b.y) / 2,
+            );
+        }
+        for (const n of shown) {
+          const p = positions.get(n.path),
+            radius = n.cluster
+              ? Math.min(40, 15 + Math.sqrt(n.notes.length))
+              : 7;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = color(n.type);
+          ctx.globalAlpha = selected === n.path || hovered === n.path ? 1 : 0.8;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          if (selected === n.path) {
+            ctx.strokeStyle = themeColor("--heading");
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+          if (
+            n.cluster ||
+            selected === n.path ||
+            showAllLabels ||
+            (shown.length < 24 && canvas.clientWidth > 650)
+          ) {
+            ctx.fillStyle = themeColor("--ink");
+            ctx.font = `${12 / scale}px system-ui`;
+            ctx.textAlign = n.cluster ? "center" : "left";
+            let label =
+              n.title.slice(0, 40) +
+              (n.cluster ? " (" + n.notes.length + ")" : "");
+            if (n.cluster) {
+              label = label.slice(0, 30) + (label.length > 30 ? "…" : "");
+              const half = ctx.measureText(label).width / 2;
+              const labelX = Math.max(
+                (8 - offset.x) / scale + half,
+                Math.min(
+                  p.x,
+                  (canvas.clientWidth - 8 - offset.x) / scale - half,
+                ),
+              );
+              ctx.fillText(label, labelX, p.y + radius + 16 / scale);
+            } else {
+              const available =
+                (canvas.clientWidth - offset.x) / scale -
+                (p.x + radius + 5) -
+                8;
+              while (
+                label.length > 3 &&
+                ctx.measureText(label).width > available
+              )
+                label = label.slice(0, -2) + "…";
+              if (available > 15)
+                ctx.fillText(label, p.x + radius + 5, p.y + 4);
+            }
+          }
+        }
+        ctx.restore();
+      }
+      function fitGraph() {
+        if (!shown.length) return;
+        const points = shown.map((n) => positions.get(n.path)).filter(Boolean);
+        if (!points.length) return;
+        const xs = points.map((p) => p.x),
+          ys = points.map((p) => p.y),
+          left = Math.min(...xs),
+          right = Math.max(...xs),
+          top = Math.min(...ys),
+          bottom = Math.max(...ys),
+          width = Math.max(1, right - left),
+          height = Math.max(1, bottom - top),
+          margin = canvas.clientWidth < 600 ? 48 : 112;
+        scale = Math.max(
+          0.05,
+          Math.min(
+            5,
+            (canvas.clientWidth - margin * 2) / width,
+            (canvas.clientHeight - margin * 2) / height,
+          ),
+        );
+        offset = {
+          x: (canvas.clientWidth - width * scale) / 2 - left * scale,
+          y: (canvas.clientHeight - height * scale) / 2 - top * scale,
+        };
+        draw();
+      }
+      function apiPath(path) {
+        const space = new URLSearchParams(location.search).get("workspace");
+        return (
+          path +
+          (path.includes("?") ? "&" : "?") +
+          (space ? "workspace=" + encodeURIComponent(space) : "")
+        );
+      }
+      async function action(request) {
+        const response = await fetch(apiPath("/api/action"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Brain-Token": data.capability,
+          },
+          body: JSON.stringify(request),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "The change failed.");
+        data.version = "";
+        await refreshLive(true);
+        return result;
+      }
+      function field(
+        form,
+        label,
+        value = "",
+        choices = null,
+        multiline = false,
+      ) {
+        const row = el("label", label, form);
+        row.style.display = "block";
+        row.style.marginBlock = "10px";
+        const input = el(
+          choices ? "select" : multiline ? "textarea" : "input",
+          undefined,
+          row,
+        );
+        input.style.width = "100%";
+        input.style.boxSizing = "border-box";
+        if (choices)
+          for (const choice of choices) {
+            const option = el(
+              "option",
+              typeof choice === "string" ? choice : choice.label,
+              input,
+            );
+            option.value = typeof choice === "string" ? choice : choice.value;
+          }
+        input.value = value;
+        input.required = true;
+        input.setAttribute("aria-label", label);
+        return input;
+      }
+      function submitForm(form, label, handler) {
+        const button = el("button", label, form);
+        button.type = "submit";
+        const status = el("p", "", form);
+        status.setAttribute("role", "status");
+        form.onsubmit = async (event) => {
+          event.preventDefault();
+          button.disabled = true;
+          try {
+            await handler();
+            status.textContent = "Saved.";
+          } catch (error) {
+            status.textContent = error.message;
+          } finally {
+            button.disabled = false;
+          }
+        };
+      }
+      function captureForm(note = null) {
+        const panel = preparePanel("capture");
+        el("h2", note ? "Record an observation" : "Add a subject", panel);
+        const form = el("form", undefined, panel);
+        const title = field(form, "Name");
+        if (!note) {
+          const recordType = field(form, "Record type", "Entity", [
+            "Entity",
+            "Concept",
+            "Fact",
+            "Decision",
+            "Procedure",
+          ]);
+          const kind = field(form, "Kind", "person", [
+            "person",
+            "organization",
+            "service",
+            "asset",
+            "system",
+            "topic",
+          ]);
+          const body = field(form, "Description", "", null, true);
+          const sources = field(
+            form,
+            "Sources (one reference per line)",
+            "",
+            null,
+            true,
+          );
+          sources.required = false;
+          recordType.onchange = () => {
+            kind.closest("label").hidden = recordType.value !== "Entity";
+            form.querySelector("button[type=submit]").textContent =
+              recordType.value === "Entity" ? "Save subject" : "Save knowledge";
+          };
+          submitForm(form, "Save subject", async () => {
+            const saved = await action({
+              action: recordType.value === "Entity" ? "entity" : "capture",
+              type: recordType.value,
+              title: title.value,
+              kind: kind.value,
+              body: body.value,
+              sources: sources.value
+                .split("\n")
+                .map((v) => v.trim())
+                .filter(Boolean)
+                .map((resource) => ({ resource })),
+            });
+            if (byId.has(saved.path)) select(byId.get(saved.path));
+          });
+          return;
+        }
+        const options = [{ value: "entity:" + note.id, label: note.title }];
+        for (const edge of note.relations || [])
+          if (edge.id)
+            options.push({
+              value: "relation:" + edge.id,
+              label:
+                "Relation: " +
+                edge.type +
+                " → " +
+                (byId.get(edge.target)?.title || edge.target),
+            });
+        const subject = field(form, "Subject", options[0].value, options);
+        const predicate = field(form, "Property");
+        el(
+          "small",
+          "Use lowercase words joined with _. Example: support_status.",
+          form,
+        );
+        const value = field(form, "Value");
+        const basis = field(form, "Basis", "reported", [
+          "direct",
+          "reported",
+          "inferred",
+        ]);
+        const sources = field(
+          form,
+          "Sources (one reference per line)",
+          "",
+          null,
+          true,
+        );
+        sources.required = false;
+        const observed = field(form, "Observed at", new Date().toISOString());
+        const until = field(form, "Valid until");
+        until.required = false;
+        submitForm(form, "Save observation", async () => {
+          const split = subject.value.indexOf(":");
+          const saved = await action({
+            action: "observe",
+            title: title.value,
+            subject_kind: subject.value.slice(0, split),
+            subject: subject.value.slice(split + 1),
+            predicate: predicate.value,
+            value: value.value,
+            basis: basis.value,
+            sources: sources.value
+              .split("\n")
+              .map((v) => v.trim())
+              .filter(Boolean)
+              .map((resource) => ({ resource })),
+            observed_at: observed.value,
+            valid_until: until.value || null,
+          });
+          if (byId.has(saved.path)) select(byId.get(saved.path));
+        });
+      }
+      async function shareForm(note) {
+        const startedEpoch = panelEpoch;
+        const response = await fetch(
+          apiPath("/api/note?path=" + encodeURIComponent(note.path)),
+        );
+        if (!response.ok) throw new Error("The note could not be loaded.");
+        const full = await response.json();
+        if (panelEpoch !== startedEpoch || selected !== note.path) return;
+        const panel = preparePanel("share");
+        el("h2", "Review shared content", panel);
+        el(
+          "p",
+          "Only this projection is shared. Private history and task progress are excluded. Review all text and source references.",
+          panel,
+        );
+        const publication = full.metadata.brain.publication;
+        if (publication) {
+          const pre = el(
+            "pre",
+            JSON.stringify(publication.projection, null, 2),
+            panel,
+            "projection",
+          );
+          pre.style.whiteSpace = "pre-wrap";
+          pre.style.overflowWrap = "anywhere";
+          el(
+            "p",
+            "Destination: " +
+              publication.destination +
+              " · " +
+              publication.state,
+            panel,
+          );
+          if (publication.state === "candidate") {
+            const approval = el("form", undefined, panel);
+            submitForm(approval, "Approve this projection", async () => {
+              await action({
+                action: "approve",
+                key: note.path,
+                revision: full.metadata.brain.revision,
+                reason: "Review this projection for its selected space.",
+              });
+              await shareForm(byId.get(note.path));
+            });
+          }
+        }
+        const form = el("form", undefined, panel);
+        const destination = field(
+          form,
+          "Destination space",
+          publication?.destination || "",
+        );
+        const reason = field(form, "Reason to share");
+        const body = field(
+          form,
+          "Shared text",
+          publication?.projection?.body ??
+            full.body.split("<!-- brain:relations -->")[0].trim(),
+          null,
+          true,
+        );
+        submitForm(form, "Propose this content", async () => {
+          await action({
+            action: "propose",
+            key: note.path,
+            revision: full.metadata.brain.revision,
+            destination: destination.value,
+            reason: reason.value,
+            body: body.value,
+          });
+          await shareForm(byId.get(note.path));
+        });
+      }
+      function select(n, remember = true) {
+        if (!n) return;
+        selected = n.path;
+        if (remember && !n.cluster) rememberSelection(n.path);
+        for (const row of document.querySelectorAll("#list tbody tr")) {
+          const current = row.dataset.path === n.path;
+          row.classList.toggle("is-selected", current);
+          row
+            .querySelector("button")
+            ?.setAttribute("aria-pressed", String(current));
+        }
+        const panel = preparePanel();
+        el(
+          "span",
+          n.cluster ? "KNOWLEDGE CLUSTER" : n.type.toUpperCase(),
+          panel,
+          "eyebrow",
+        );
+        el("h2", n.title, panel);
+        if (n.cluster) {
+          el("p", n.notes.length + " notes in this cluster.", panel);
+          el("button", "Open cluster", panel, "primary").onclick = () => {
+            mode = "notes";
+            layout(n.notes);
+            fitGraph();
+          };
+          draw();
+          return;
+        }
+        el("span", n.type, panel, "badge");
+        el("span", n.state, panel, "badge");
+        el("span", "Score " + n.score, panel, "badge");
+        if (n.work_state) el("span", n.work_state, panel, "badge");
+        const pub = n.publication?.state;
+        if (pub)
+          el(
+            "span",
+            "Sharing: " + pub,
+            panel,
+            "badge " + (pub === "approved" ? "success" : "warning"),
+          );
+        if (n.stale)
+          el(
+            "p",
+            "The source or validity needs a new check.",
+            panel,
+            "notice warning",
+          );
+        el("p", n.description, panel);
+        el("small", n.path, panel, "note-path mono");
+        const tabs = el("div", undefined, panel, "inspector-tabs");
+        tabs.setAttribute("role", "tablist");
+        tabs.setAttribute("aria-label", "Note details");
+        const panes = new Map();
+        for (const [id, title] of [
+          ["note", "Content"],
+          ["evidence", "Evidence"],
+          ["relations", "Relations"],
+          ["history", "History"],
+        ]) {
+          const button = el("button", title, tabs);
+          button.type = "button";
+          button.setAttribute("role", "tab");
+          button.id = "tab-" + id;
+          button.setAttribute("aria-controls", "pane-" + id);
+          const pane = el("section", undefined, panel);
+          pane.id = "pane-" + id;
+          pane.setAttribute("role", "tabpanel");
+          pane.setAttribute("aria-labelledby", button.id);
+          panes.set(id, pane);
+          button.onclick = () => switchTab(id);
+        }
+        function switchTab(id) {
+          inspectorTab = id;
+          for (const [name, pane] of panes) {
+            pane.hidden = name !== id;
+            $("tab-" + name).setAttribute("aria-selected", String(name === id));
+            $("tab-" + name).tabIndex = name === id ? 0 : -1;
+          }
+        }
+        tabs.onkeydown = (e) => {
+          if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key))
+            return;
+          e.preventDefault();
+          const ids = [...panes.keys()];
+          let i = ids.indexOf(inspectorTab);
+          i =
+            e.key === "Home"
+              ? 0
+              : e.key === "End"
+                ? 3
+                : (i + (e.key === "ArrowRight" ? 1 : 3)) % 4;
+          switchTab(ids[i]);
+          $("tab-" + ids[i]).focus();
+        };
+        switchTab(panes.has(inspectorTab) ? inspectorTab : "note");
+        const contentPane = panes.get("note"),
+          evidence = panes.get("evidence"),
+          relations = panes.get("relations"),
+          historyPane = panes.get("history");
+        const content = el("article", undefined, contentPane, "note-content");
+        if (data.capability && n.id) {
+          el("p", "Loading full note…", content, "muted");
+          void readFull(n, content);
+        } else el("p", n.description, content);
+        if (n.observation) {
+          el("h3", "Observation", evidence);
+          el(
+            "span",
+            n.observation.basis,
+            evidence,
+            "badge " + (n.observation.basis === "inferred" ? "warning" : ""),
+          );
+          if (n.observation.basis === "inferred")
+            el(
+              "p",
+              "This is an agent inference. It is not a verified fact.",
+              evidence,
+              "notice warning",
+            );
+          el(
+            "p",
+            n.observation.predicate +
+              ": " +
+              JSON.stringify(n.observation.value),
+            evidence,
+          );
+          el("small", "Observed: " + n.observation.observed_at, evidence);
+          if (n.observation.valid_until)
+            el("p", "Valid until: " + n.observation.valid_until, evidence);
+        }
+        el("h3", "Evidence", evidence);
+        for (const reason of n.reasons) el("p", reason, evidence);
+        for (const source of n.sources) {
+          if (
+            !link(
+              evidence,
+              source.title || source.resource,
+              source.href || source.resource,
+            )
+          )
+            el(
+              "span",
+              source.title || source.resource,
+              evidence,
+              "source mono",
+            );
+        }
+        if (!n.sources.length)
+          el("p", "No source is recorded.", evidence, "muted");
+        el(
+          "p",
+          "Publication review does not verify a claim.",
+          evidence,
+          "muted",
+        );
+        link(contentPane, "Open Markdown note", n.file);
+        if (data.capability && n.id) {
+          const actions = el("div", undefined, contentPane, "note-actions");
+          el("button", "Read full note", actions).onclick = () =>
+            readFull(n, content);
+          el("button", "Edit note", actions).onclick = () => editForm(n);
+          el("button", "Record observation", actions).onclick = () =>
+            captureForm(n);
+          if (!["Profile", "Checkpoint", "Task"].includes(n.type))
+            el("button", "Propose or review sharing", actions).onclick = () => {
+              void shareForm(n).catch((error) =>
+                el("p", error.message, contentPane, "notice warning"),
+              );
+            };
+        }
+        if (n.type === "ExternalReference") {
+          el("h3", "External reference", contentPane);
+          for (const ref of n.external_refs) {
+            el(
+              "p",
+              ref.provider +
+                " · " +
+                ref.instance +
+                " · " +
+                ref.entity_type +
+                " · " +
+                ref.entity_id,
+              contentPane,
+            );
+            el(
+              "p",
+              "Unchecked in this local view. Resolve this reference through its connected service.",
+              contentPane,
+            );
+            if (ref.observed_revision)
+              el(
+                "small",
+                "Observed revision: " + ref.observed_revision,
+                contentPane,
+              );
+          }
+        }
+        const related = data.edges.filter(
+          (e) => e.origin === n.path || e.target === n.path,
+        );
+        el("h3", related.length + " connections", relations);
+        for (const edge of related.slice(0, 100)) {
+          const row = el("div", undefined, relations, "relation");
+          el(
+            "small",
+            (edge.origin === n.path ? "→ " : "← ") +
+              edge.kind.replaceAll("_", " "),
+            row,
+          );
+          const target = byId.get(
+            edge.origin === n.path ? edge.target : edge.origin,
+          );
+          if (target)
+            el("button", target.title, row).onclick = () => select(target);
+          else el("span", "Target not found", row);
+        }
+        if (!related.length) el("p", "No relations yet.", relations, "muted");
+        if (related.length > 100)
+          el(
+            "p",
+            related.length - 100 + " other relations. Use memora neighbors.",
+            relations,
+          );
+        el("button", "Show neighbors", relations).onclick = () => {
+          mode = "notes";
+          layout(
+            data.nodes.filter((v) =>
+              new Set([
+                n.path,
+                ...related.flatMap((e) => [e.origin, e.target]),
+              ]).has(v.path),
+            ),
+          );
+          showList(false);
+          fitGraph();
+        };
+        if (data.capability && n.id) {
+          const details = el("details", undefined, relations);
+          el("summary", "Add relation", details);
+          const form = el("form", undefined, details);
+          const target = field(
+            form,
+            "Target",
+            "",
+            data.nodes
+              .filter((v) => v.id && v.id !== n.id)
+              .map((v) => ({ value: v.id, label: v.title })),
+          );
+          const kind = field(form, "Relation type", "related_to", [
+            "related_to",
+            "depends_on",
+            "supports",
+            "contradicts",
+            "replaces",
+            "explains",
+            "documents",
+            "implements",
+            "validates",
+            "derived_from",
+          ]);
+          submitForm(form, "Save relation", async () => {
+            const saved = await action({
+              action: "relate",
+              origin: n.id,
+              target: target.value,
+              kind: kind.value,
+              revision: n.revision,
+              reason: "Link these knowledge subjects.",
+            });
+            select(byId.get(saved.path));
+          });
+        }
+        el("h3", "Revision history", historyPane);
+        const history = data.events
+          .filter((e) => e.entity === n.path || (n.id && e.entity_id === n.id))
+          .sort((a, b) => b.at.localeCompare(a.at));
+        for (const event of history.slice(0, 20)) {
+          const item = el("div", undefined, historyPane, "event");
+          el("small", event.at + " · " + event.actor, item);
+          el("p", event.reason, item);
+          link(item, "Revision " + event.revision, event.file);
+        }
+        if (!history.length)
+          el("p", "No recent event for this note is available.", historyPane);
+        el(
+          "small",
+          "The view includes up to 1,000 recent events. Use memora history for the full history.",
+          historyPane,
+        );
+        link(historyPane, "Open latest change", n.history_file);
+        draw();
+      }
+      function renderSessions() {
+        const area = $("sessionList");
+        area.replaceChildren();
+        const sessions = data.sessions || [];
+        document.querySelector("#memorySessions > summary").textContent =
+          "Session receipts · " + sessions.length;
+        if (!sessions.length)
+          el(
+            "p",
+            "No context calls recorded. Installation is not proof of use.",
+            area,
+          );
+        for (const session of sessions.slice(0, 20)) {
+          const item = el("details", undefined, area);
+          const calls = session.events.filter(
+            (event) => event.kind === "context_returned",
+          );
+          el(
+            "summary",
+            session.created_at + " · " + calls.length + " context calls",
+            item,
+          );
+          el("small", session.session_id, item);
+          for (const event of session.events) {
+            const row = el("div", undefined, item, "event");
+            el(
+              "small",
+              event.at + " · " + event.kind.replaceAll("_", " "),
+              row,
+            );
+            if (event.kind === "context_returned") {
+              el(
+                "p",
+                event.note_count +
+                  " task notes · " +
+                  event.bytes +
+                  " bytes · " +
+                  event.search.mode +
+                  " · " +
+                  event.requires_recheck +
+                  " need a source check",
+                row,
+              );
+              for (const note of event.notes) {
+                const button = el("button", note.title, row);
+                button.onclick = () => {
+                  if (byId.has(note.path)) select(byId.get(note.path));
+                };
+              }
+            } else if (event.path)
+              el("p", event.path + " · revision " + event.revision, row);
+          }
+        }
+      }
+      function renderList() {
+        const area = $("list");
+        area.replaceChildren();
+        const sortValue = (note, key) => {
+          if (key === "project")
+            return note.projects
+              .map((id) => byId.get(id)?.title || id)
+              .join(" ");
+          if (key === "repository")
+            return note.repositories
+              .map((id) => byId.get(id)?.title || id)
+              .join(" ");
+          return note[key];
+        };
+        const sorted = (
+          focusPaths
+            ? filtered.filter((n) => focusPaths.has(n.path))
+            : [...filtered]
+        ).sort((a, b) => {
+          const left = sortValue(a, sort.key),
+            right = sortValue(b, sort.key),
+            result =
+              typeof left === "number"
+                ? left - right
+                : String(left ?? "").localeCompare(
+                    String(right ?? ""),
+                    undefined,
+                    {
+                      numeric: true,
+                      sensitivity: "base",
+                    },
+                  );
+          return result * sort.direction || a.path.localeCompare(b.path);
+        });
+        const pageCount = Math.max(1, Math.ceil(sorted.length / pageSize));
+        page = Math.min(page, pageCount - 1);
+        const start = page * pageSize,
+          entries = sorted.slice(start, start + pageSize);
+        const table = el("table", undefined, area),
+          head = el("thead", undefined, table),
+          tr = el("tr", undefined, head);
+        for (const [key, label] of [
+          ["title", "Name"],
+          ["type", "Type"],
+          ["project", "Project"],
+          ["repository", "Repository"],
+          ["state", "State"],
+          ["score", "Score"],
+        ]) {
+          const th = el("th", undefined, tr);
+          th.setAttribute(
+            "aria-sort",
+            sort.key === key
+              ? sort.direction > 0
+                ? "ascending"
+                : "descending"
+              : "none",
+          );
+          const button = el(
+            "button",
+            label +
+              (sort.key === key ? (sort.direction > 0 ? " ↑" : " ↓") : ""),
+            th,
+          );
+          button.dataset.sort = key;
+          button.onclick = () => {
+            if (sort.key === key) sort.direction *= -1;
+            else sort = { key, direction: 1 };
+            page = 0;
+            renderList();
+          };
+        }
+        const body = el("tbody", undefined, table);
+        for (const n of entries) {
+          const row = el("tr", undefined, body);
+          row.classList.toggle("is-selected", selected === n.path);
+          row.dataset.path = n.path;
+          const cell = el("td", undefined, row),
+            b = el("button", n.title, cell);
+          b.setAttribute("aria-pressed", String(selected === n.path));
+          b.onclick = () => select(n);
+          el("td", n.type, row);
+          el(
+            "td",
+            n.projects.map((id) => byId.get(id)?.title || id).join(", ") || "—",
+            row,
+          );
+          el(
+            "td",
+            n.repositories.map((id) => byId.get(id)?.title || id).join(", ") ||
+              "—",
+            row,
+          );
+          el("td", n.state, row);
+          el("td", n.score, row);
+        }
+        const pager = el("div", undefined, area, "list-pager");
+        const previous = el("button", "Previous", pager);
+        previous.disabled = page === 0;
+        previous.onclick = () => {
+          page -= 1;
+          renderList();
+        };
+        el(
+          "span",
+          sorted.length
+            ? `${start + 1}–${Math.min(start + pageSize, sorted.length)} of ${sorted.length} · Page ${page + 1} of ${pageCount}`
+            : "No notes match these filters.",
+          pager,
+          "muted",
+        );
+        const next = el("button", "Next", pager);
+        next.disabled = page >= pageCount - 1;
+        next.onclick = () => {
+          page += 1;
+          renderList();
+        };
+        if (window.brainViewState) window.brainViewState.page = page;
+      }
+      function resize() {
+        if (listMode || !canvas.clientWidth || !canvas.clientHeight) return;
+        const dpr = devicePixelRatio || 1,
+          width = canvas.clientWidth,
+          height = canvas.clientHeight;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        positions.clear();
+        layout();
+        fitGraph();
+      }
+      async function refreshLive(force = false) {
+        if (!data.live || (!force && document.hidden)) return;
+        if (refreshInFlight) {
+          await refreshPromise;
+          if (!force) return;
+        }
+        refreshInFlight = true;
+        let finish;
+        refreshPromise = new Promise((resolve) => {
+          finish = resolve;
+        });
+        try {
+          const response = await fetch(apiPath("/api/data"), {
+            cache: "no-store",
+            headers: { "If-None-Match": `"${data.version}"` },
+          });
+          if (response.status === 304) return;
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const previousSelection = selected;
+          data = await response.json();
+          byId = new Map(data.nodes.map((note) => [note.path, note]));
+          updateControls(true);
+          updateTime();
+          renderSessions();
+          apply(true);
+          if (!$("details").dataset.mode) {
+            if (
+              previousSelection &&
+              filtered.some((note) => note.path === previousSelection)
+            )
+              select(byId.get(previousSelection));
+            else if (previousSelection) clearSelection();
+          }
+        } catch (error) {
+          $("time").textContent = `Live · refresh failed: ${error.message}`;
+        } finally {
+          refreshInFlight = false;
+          finish();
+        }
+      }
+      for (const id of [
+        "query",
+        "project",
+        "repository",
+        "type",
+        "state",
+        "score",
+      ])
+        $(id).addEventListener(id === "query" ? "input" : "change", apply);
+      $("clusters").onclick = () => {
+        mode = "clusters";
+        focusPaths = null;
+        layout();
+        fitGraph();
+      };
+      $("expand").onclick = () => {
+        mode = "notes";
+        focusPaths = null;
+        layout();
+        fitGraph();
+      };
+      $("listToggle").onclick = () => showList(!listMode);
+      $("zoomIn").onclick = () => {
+        scale = Math.min(5, scale * 1.2);
+        draw();
+      };
+      $("zoomOut").onclick = () => {
+        scale = Math.max(0.05, scale / 1.2);
+        draw();
+      };
+      $("reset").onclick = () => {
+        fitGraph();
+      };
+      canvas.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          const rect = canvas.getBoundingClientRect(),
+            x = e.clientX - rect.left,
+            y = e.clientY - rect.top,
+            next = Math.max(
+              0.05,
+              Math.min(5, scale * (e.deltaY < 0 ? 1.12 : 0.89)),
+            );
+          offset = {
+            x: x - ((x - offset.x) * next) / scale,
+            y: y - ((y - offset.y) * next) / scale,
+          };
+          scale = next;
+          draw();
+        },
+        { passive: false },
+      );
+      canvas.addEventListener("pointerdown", (e) => {
+        drag = {
+          x: e.clientX,
+          y: e.clientY,
+          ox: offset.x,
+          oy: offset.y,
+          moved: false,
+        };
+        canvas.setPointerCapture(e.pointerId);
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        if (!drag) {
+          const rect = canvas.getBoundingClientRect();
+          const x = (e.clientX - rect.left - offset.x) / scale,
+            y = (e.clientY - rect.top - offset.y) / scale;
+          const node = shown.find((n) => {
+            const p = positions.get(n.path);
+            return p && Math.hypot(p.x - x, p.y - y) < (n.cluster ? 45 : 15);
+          });
+          hovered = node?.path || null;
+          $("tooltip").hidden = !node;
+          if (node) {
+            $("tooltip").textContent =
+              node.title +
+              " · " +
+              (node.cluster ? node.notes.length + " notes" : node.type);
+            $("tooltip").style.left =
+              Math.min(
+                e.clientX - rect.left + 12,
+                Math.max(0, rect.width - 265),
+              ) + "px";
+            $("tooltip").style.top =
+              Math.max(54, e.clientY - rect.top - 35) + "px";
+          }
+          canvas.style.cursor = node ? "pointer" : "grab";
+          draw();
+          return;
+        }
+        const dx = e.clientX - drag.x,
+          dy = e.clientY - drag.y;
+        if (Math.abs(dx) + Math.abs(dy) > 5) drag.moved = true;
+        offset = { x: drag.ox + dx, y: drag.oy + dy };
+        draw();
+      });
+      canvas.addEventListener("pointerup", (e) => {
+        if (drag && !drag.moved) {
+          const rect = canvas.getBoundingClientRect(),
+            x = (e.clientX - rect.left - offset.x) / scale,
+            y = (e.clientY - rect.top - offset.y) / scale;
+          let closest = null,
+            distance = Infinity;
+          for (const n of shown) {
+            const p = positions.get(n.path),
+              d = Math.hypot(p.x - x, p.y - y);
+            if (d < (n.cluster ? 45 : 15) && d < distance) {
+              closest = n;
+              distance = d;
+            }
+          }
+          if (closest) select(closest);
+        }
+        drag = null;
+      });
+      canvas.addEventListener("pointerleave", () => {
+        $("tooltip").hidden = true;
+        hovered = null;
+        draw();
+      });
+      canvas.addEventListener("pointercancel", () => {
+        drag = null;
+      });
+      $("themeToggle").onclick = () =>
+        setTheme(
+          document.documentElement.dataset.theme === "dark" ? "light" : "dark",
+        );
+      try {
+        setTheme(
+          localStorage.getItem("memora-theme") === "dark" ? "dark" : "light",
+        );
+      } catch {
+        setTheme("light");
+      }
+      $("clearFilters").onclick = () => {
+        for (const id of ["query", "project", "repository", "type", "state"])
+          $(id).value = "";
+        $("score").value = "0";
+        quickView = "all";
+        apply();
+      };
+      for (const button of document.querySelectorAll("[data-view]"))
+        button.onclick = () => {
+          quickView = button.dataset.view;
+          apply();
+        };
+      $("quickView").onchange = () => {
+        quickView = $("quickView").value;
+        apply();
+      };
+      $("navGraph").onclick = () => showList(false);
+      $("navList").onclick = () => showList(true);
+      $("navCapture").onclick = () => {
+        if (data.capability) captureForm();
+      };
+      $("navCapture").disabled = !data.capability;
+      $("navHelp").onclick = () => {
+        $("graphGuide").open = true;
+        $("graphGuide").scrollIntoView({ block: "nearest" });
+      };
+      $("closeInspector").onclick = clearSelection;
+      for (const [id, step] of [
+        ["selectionBack", -1],
+        ["selectionForward", 1],
+      ])
+        $(id).onclick = () => {
+          navigationIndex += step;
+          select(
+            byId.get(navigation[navigationIndex]) ||
+              shown.find((n) => n.path === navigation[navigationIndex]),
+            false,
+          );
+          $("selectionBack").disabled = navigationIndex < 1;
+          $("selectionForward").disabled =
+            navigationIndex >= navigation.length - 1;
+        };
+      document.addEventListener("keydown", (event) => {
+        if (event.target.closest("input,textarea,select,[contenteditable]"))
+          return;
+        if (event.key === "/") {
+          event.preventDefault();
+          $("query").focus();
+        }
+        if (event.key === "Escape") clearSelection();
+      });
+      canvas.tabIndex = 0;
+      canvas.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          showList(true);
+          $("list").querySelector("tbody button")?.focus();
+        }
+      });
+      updateControls();
+      updateTime();
+      if (data.capability) {
+        $("add-knowledge").hidden = false;
+        $("add-knowledge").onclick = () => captureForm();
+        $("space-control").hidden = false;
+        for (const name of data.workspaces || ["personal"]) {
+          const option = el("option", name, $("space"));
+          option.value = name;
+        }
+        $("mobile-space").hidden = false;
+        for (const option of $("space").options)
+          $("mobile-space").add(new Option(option.textContent, option.value));
+        $("mobile-space").value =
+          new URLSearchParams(location.search).get("workspace") || "personal";
+        $("mobile-space").onchange = () => {
+          location.search =
+            "?workspace=" + encodeURIComponent($("mobile-space").value);
+        };
+        $("space").value =
+          new URLSearchParams(location.search).get("workspace") || "personal";
+        $("space").onchange = () => {
+          location.search =
+            "?workspace=" + encodeURIComponent($("space").value);
+        };
+        $("export-knowledge").hidden = false;
+        $("export-knowledge").onclick = () => {
+          const panel = preparePanel("export");
+          el("h2", "Export reviewed knowledge", panel);
+          const form = el("form", undefined, panel);
+          const destination = field(form, "Destination space");
+          submitForm(form, "Download approved content", async () => {
+            const value = await action({
+              action: "export",
+              destination: destination.value,
+            });
+            const url = URL.createObjectURL(
+              new Blob([JSON.stringify(value, null, 2)], {
+                type: "application/json",
+              }),
+            );
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "reviewed-knowledge.json";
+            link.click();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+          });
+        };
+      }
+      renderSessions();
+      new ResizeObserver(resize).observe(canvas.parentElement);
+      apply();
+      if (data.live) window.setInterval(refreshLive, 2500);
+    </script>
+  </body>
+</html>

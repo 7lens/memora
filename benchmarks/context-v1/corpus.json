@@ -1,0 +1,26 @@
+{
+  "version": "context-study-v1",
+  "description": "Fictional public data. No personal memory or customer data.",
+  "notes": [
+    {"id":"preferences","type":"Profile","title":"Work preferences","body":"Use Spanish for project updates. Use exactly three bullet points. State each decision and its reason."},
+    {"id":"queue-choice","type":"Decision","title":"Parcel event queue decision","body":"Use the outbox pattern for Parcel events. Reason: an event and its database change must commit together. Do not add a distributed transaction."},
+    {"id":"handoff","type":"Checkpoint","title":"Parcel invoice handoff","body":"The invoice parser is complete. Next step: test duplicate invoice imports. The unresolved blocker is a missing sandbox account.","brain":{"work_state":"in_progress","context":{"session":"fixture-previous-chat"}}},
+    {"id":"parcel","type":"Entity","title":"Parcel application","body":"Parcel handles delivery orders.","relations":[{"type":"depends_on","target":"routing"}]},
+    {"id":"routing","type":"Entity","title":"Route calculation service","body":"The Route calculation service depends on the Harbor geocoding vendor. Its owner is the Cartography team."},
+    {"id":"old-owner","type":"Fact","title":"Parcel escalation owner old record","body":"The escalation owner was the Cedar team.","brain":{"state":"superseded"}},
+    {"id":"new-owner","type":"Fact","title":"Parcel escalation owner current record","body":"The escalation owner is the Willow team. This record replaces the Cedar team record."},
+    {"id":"expired","type":"Fact","title":"Parcel vendor certificate","body":"The Parcel vendor certificate was valid at its last check. This source cannot establish current validity.","stale_after":"2001-01-02T00:00:00Z"},
+    {"id":"quota-a","type":"Fact","title":"Parcel upload quota operations report","body":"Operations reports a Parcel upload quota of 18 MB. The report conflicts with the support report. Neither report has priority.","relations":[{"type":"contradicts","target":"quota-b"}]},
+    {"id":"quota-b","type":"Fact","title":"Parcel upload quota support report","body":"Support reports a Parcel upload quota of 24 MB. The report conflicts with the operations report. Neither report has priority.","relations":[{"type":"contradicts","target":"quota-a"}]},
+    {"id":"restore","type":"Procedure","title":"Parcel restore procedure","body":"First stop the database. Then restore the dump into a new empty database. Never restore over the active database."},
+    {"id":"cost","type":"Decision","title":"Parcel charge allocation","body":"Use exact decimal arithmetic for charge allocation. Allocation shares must sum to one. Reason: binary rounding can change the amount."},
+    {"id":"business","type":"Concept","title":"Parcel revenue definition","body":"Parcel net revenue excludes refunded orders and sales tax. The Revenue Operations team owns this definition."},
+    {"id":"inference","type":"Idea","title":"Parcel renewal risk hypothesis","body":"An agent inferred that the Harbor vendor might not renew its contract. This is an unverified hypothesis. There is no source that confirms non-renewal."},
+    {"id":"noise-01","type":"Fact","title":"Orchard queue","body":"Orchard uses direct event delivery. It is a separate project."},
+    {"id":"noise-02","type":"Fact","title":"Orchard escalation owner","body":"The Orchard escalation owner is the Birch team. This does not apply to Parcel."},
+    {"id":"noise-03","type":"Fact","title":"Orchard revenue","body":"Orchard gross revenue includes sales tax. Orchard is separate from Parcel."},
+    {"id":"noise-04","type":"Fact","title":"Orchard restore","body":"The Orchard file archive has a separate restore procedure."},
+    {"id":"noise-05","type":"Fact","title":"Orchard quota","body":"The Orchard upload quota is 64 MB. This does not apply to Parcel."},
+    {"id":"noise-06","type":"Fact","title":"Orchard handoff","body":"The next Orchard task is to replace a logo. There is no relation to the Parcel invoice work."}
+  ]
+}

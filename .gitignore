@@ -1,0 +1,15 @@
+.venv/
+.brain/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+exports/
+.DS_Store
+
+/knowledge/
+
+.ruff_cache/
+build/
+dist/
+.env
+.env.*

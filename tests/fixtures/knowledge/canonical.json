@@ -1,0 +1,5 @@
+{
+	"numbers": [1, 0, 0.25, 1e-7, 1e30, 9007199254740991],
+	"unicode": { "😀": "hello", "é": "line\nquote\"", "a": true },
+	"empty": null
+}

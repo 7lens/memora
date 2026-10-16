@@ -1,0 +1,506 @@
+[
+  {
+    "id": "pair-0001",
+    "task": "conflict",
+    "repetition": 1,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0002",
+    "task": "missing",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0003",
+    "task": "missing",
+    "repetition": 1,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0004",
+    "task": "business",
+    "repetition": 1,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0005",
+    "task": "missing",
+    "repetition": 0,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0006",
+    "task": "business",
+    "repetition": 2,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0007",
+    "task": "expiry",
+    "repetition": 1,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0008",
+    "task": "preferences",
+    "repetition": 1,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0009",
+    "task": "handoff",
+    "repetition": 2,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0010",
+    "task": "change",
+    "repetition": 0,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0011",
+    "task": "business",
+    "repetition": 1,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0012",
+    "task": "conflict",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0013",
+    "task": "procedure",
+    "repetition": 1,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0014",
+    "task": "relations",
+    "repetition": 0,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0015",
+    "task": "self-contained",
+    "repetition": 2,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0016",
+    "task": "handoff",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0017",
+    "task": "self-contained",
+    "repetition": 1,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0018",
+    "task": "handoff",
+    "repetition": 1,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0019",
+    "task": "inference",
+    "repetition": 2,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0020",
+    "task": "procedure",
+    "repetition": 2,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0021",
+    "task": "business",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0022",
+    "task": "preferences",
+    "repetition": 0,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0023",
+    "task": "change",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0024",
+    "task": "relations",
+    "repetition": 2,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0025",
+    "task": "preferences",
+    "repetition": 2,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0026",
+    "task": "procedure",
+    "repetition": 1,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0027",
+    "task": "expiry",
+    "repetition": 0,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0028",
+    "task": "self-contained",
+    "repetition": 1,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0029",
+    "task": "inference",
+    "repetition": 1,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0030",
+    "task": "preferences",
+    "repetition": 2,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0031",
+    "task": "self-contained",
+    "repetition": 0,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0032",
+    "task": "preferences",
+    "repetition": 0,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0033",
+    "task": "change",
+    "repetition": 1,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0034",
+    "task": "decision",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0035",
+    "task": "change",
+    "repetition": 2,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0036",
+    "task": "missing",
+    "repetition": 1,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0037",
+    "task": "business",
+    "repetition": 0,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0038",
+    "task": "relations",
+    "repetition": 0,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0039",
+    "task": "conflict",
+    "repetition": 1,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0040",
+    "task": "relations",
+    "repetition": 1,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0041",
+    "task": "expiry",
+    "repetition": 1,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0042",
+    "task": "conflict",
+    "repetition": 2,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0043",
+    "task": "decision",
+    "repetition": 0,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0044",
+    "task": "inference",
+    "repetition": 1,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0045",
+    "task": "self-contained",
+    "repetition": 0,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0046",
+    "task": "preferences",
+    "repetition": 1,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0047",
+    "task": "missing",
+    "repetition": 2,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0048",
+    "task": "change",
+    "repetition": 1,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0049",
+    "task": "decision",
+    "repetition": 0,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0050",
+    "task": "conflict",
+    "repetition": 0,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0051",
+    "task": "decision",
+    "repetition": 1,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0052",
+    "task": "self-contained",
+    "repetition": 2,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0053",
+    "task": "decision",
+    "repetition": 1,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0054",
+    "task": "business",
+    "repetition": 0,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0055",
+    "task": "expiry",
+    "repetition": 2,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0056",
+    "task": "expiry",
+    "repetition": 0,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0057",
+    "task": "change",
+    "repetition": 0,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0058",
+    "task": "expiry",
+    "repetition": 2,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0059",
+    "task": "inference",
+    "repetition": 0,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0060",
+    "task": "conflict",
+    "repetition": 0,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0061",
+    "task": "procedure",
+    "repetition": 0,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0062",
+    "task": "missing",
+    "repetition": 0,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0063",
+    "task": "inference",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0064",
+    "task": "inference",
+    "repetition": 0,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0065",
+    "task": "procedure",
+    "repetition": 2,
+    "A": "brain",
+    "B": "none"
+  },
+  {
+    "id": "pair-0066",
+    "task": "handoff",
+    "repetition": 0,
+    "A": "brain",
+    "B": "plain"
+  },
+  {
+    "id": "pair-0067",
+    "task": "procedure",
+    "repetition": 0,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0068",
+    "task": "relations",
+    "repetition": 1,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0069",
+    "task": "handoff",
+    "repetition": 0,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0070",
+    "task": "decision",
+    "repetition": 2,
+    "A": "plain",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0071",
+    "task": "relations",
+    "repetition": 2,
+    "A": "none",
+    "B": "brain"
+  },
+  {
+    "id": "pair-0072",
+    "task": "handoff",
+    "repetition": 1,
+    "A": "brain",
+    "B": "none"
+  }
+]
