@@ -60,6 +60,12 @@ def parser():
     from .remote import add_commands as add_remote_commands
 
     add_remote_commands(sub)
+    from .standard_commands import add_commands as add_standard_commands
+
+    add_standard_commands(sub)
+    from .obsidian_commands import add_commands as add_obsidian_commands
+
+    add_obsidian_commands(sub)
 
     def common(s):
         s.add_argument("--actor", default="process:memora")
@@ -486,6 +492,14 @@ def run(args):
     store = select_workspace(
         Store(root_path(args)), getattr(args, "workspace", "personal")
     )
+    if args.command == "obsidian":
+        from .obsidian_commands import dispatch as obsidian_dispatch
+
+        return obsidian_dispatch(store, args)
+    if args.command in {"standard", "ingest", "pilot"}:
+        from .standard_commands import dispatch as standard_dispatch
+
+        return standard_dispatch(store, args)
     if args.command == "remote":
         from .remote import dispatch as remote_dispatch
 
@@ -826,21 +840,8 @@ def run(args):
     if args.command == "uninstall":
         return uninstall(store, args.home, args.editor)
     if args.command == "doctor":
-        if args.clear_dead_lock:
-            lock = store.cache / "write.lock"
-            owner = lock / "owner.json"
-            if not owner.is_file():
-                raise MemoraError(
-                    "The lock has no owner record. Review it before removal."
-                )
-            pid = json.loads(owner.read_text())["pid"]
-            try:
-                os.kill(pid, 0)
-            except ProcessLookupError:
-                owner.unlink()
-                lock.rmdir()
-            else:
-                raise Conflict("The lock owner is still active.")
+        # Keep --clear-dead-lock as a compatible spelling. Kernel locks release
+        # on process death; neither doctor variant removes the lock file.
         with store.lock():
             pass
         result = doctor(store, args.home)

@@ -7,7 +7,6 @@ import json
 import os
 import re
 import subprocess
-import time
 import uuid
 from contextlib import contextmanager
 from pathlib import Path
@@ -28,6 +27,7 @@ from .codec import (
     render_relations,
     safe_path,
     validate_fields,
+    content_hash,
 )
 
 
@@ -86,28 +86,17 @@ class Store:
         return path
 
     @contextmanager
-    def lock(self):
-        lock = self.cache / "write.lock"
-        deadline = time.monotonic() + 10
-        while True:
-            try:
-                lock.mkdir()
+    def lock(self, timeout: float = 10.0):
+        from .locking import memory_lock
+
+        with memory_lock(self.cache, timeout) as outer:
+            if outer:
                 atomic(
-                    lock / "owner.json", json.dumps({"pid": os.getpid(), "at": now()})
+                    self.cache / "write-owner.json",
+                    json.dumps({"protocol": 2, "pid": os.getpid(), "at": now()}),
                 )
-                break
-            except FileExistsError:
-                if time.monotonic() > deadline:
-                    raise Conflict(
-                        "The memory is in use. Run doctor if the lock is old."
-                    )
-                time.sleep(0.02)
-        try:
-            self.recover()
+                self.recover()
             yield
-        finally:
-            (lock / "owner.json").unlink(missing_ok=True)
-            lock.rmdir()
 
     def recover(self) -> None:
         from .bundles import recover_import
@@ -234,6 +223,16 @@ class Store:
         b = data.setdefault("brain", {})
         b.setdefault("state", "provisional")
         b.setdefault("created_at", stamp)
+        if old is None:
+            b.setdefault("created_by", actor)
+        elif (b.get("shared_origin") or b.get("remote_origin")) and actor not in {
+            "process:remote-pull",
+            "process:shared-import",
+        }:
+            if content_hash(old, old_body) != content_hash(data, body):
+                b.setdefault("provenance", {}).update(
+                    updated_at=stamp, updated_by=actor
+                )
         b["revision"] = old_revision + 1
         data["status"] = STATES[b["state"]]
         data["generated"] = {"by": actor, "at": stamp}

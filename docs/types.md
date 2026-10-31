@@ -25,3 +25,6 @@ brain:
 Add a definition to the mapping before you use a new entity type. Keep the definition in STE.
 
 Do not use a tag as a replacement for an entity relation. Use tags for subject classification.
+
+Read [the public standard](standard/README.md) for type semantics and reviewed exchange.
+Keep personal and task types out of published knowledge.

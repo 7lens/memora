@@ -146,6 +146,22 @@ def validate(data):
         raise MemoraError("The validity end must follow the observation time.")
 
 
+def apply_validity(data, record):
+    """Project source validity into local expiry without verifying a claim."""
+    ends = [
+        value
+        for value in (
+            record.get("provenance", {}).get("valid_until"),
+            record.get("observation", {}).get("valid_until"),
+        )
+        if value
+    ]
+    if ends:
+        data["stale_after"] = min(ends, key=instant)
+    else:
+        data.pop("stale_after", None)
+
+
 def observe(
     store,
     *,
@@ -328,6 +344,24 @@ def projection(data, body):
     for field in ("entity_kind", "observation"):
         if b.get(field) is not None:
             result[field] = plain(b[field])
+    # Only these source fields can enter the exact publication review.
+    generated = data.get("generated", {})
+    provenance = {
+        key: value
+        for key, value in {
+            "created_at": b.get("created_at"),
+            "created_by": b.get("created_by"),
+            "updated_at": generated.get("at"),
+            "updated_by": generated.get("by"),
+            "valid_until": data.get("stale_after"),
+        }.items()
+        if value is not None
+    }
+    if b.get("shared_origin") or b.get("remote_origin"):
+        # Importing a representation does not make the importer the source author.
+        provenance = plain(b.get("provenance", {}))
+    if provenance:
+        result["provenance"] = provenance
     if result.get("observation"):
         observation = result["observation"]
         result["observation"] = {
@@ -382,7 +416,7 @@ def approve(store, key, revision, actor, reason):
         return store.commit(key, data, body, actor, reason, revision)
 
 
-def export_shared(store, destination, output=None):
+def export_shared(store, destination, output=None, *, standard=False):
     with store.lock():
         rows = list(notes(store))
         records, approved = [], {}
@@ -395,6 +429,8 @@ def export_shared(store, destination, output=None):
             if fingerprint(data, body) != p["fingerprint"]:
                 raise Conflict("Approved content changed. A new review is required.")
             payload = copy.deepcopy(p["projection"])
+            if not standard:
+                payload.pop("provenance", None)
             if payload.get("observation"):
                 validate(
                     {
@@ -532,6 +568,7 @@ def import_shared(store, path):
             "origin",
             "review",
             "external_refs",
+            "provenance",
         }:
             raise MemoraError("The shared record has unknown fields.")
         identity = record.get("id")
@@ -643,9 +680,15 @@ def import_shared(store, path):
                         ],
                     },
                 }
-                for field in ["entity_kind", "observation", "external_refs"]:
+                for field in [
+                    "entity_kind",
+                    "observation",
+                    "external_refs",
+                    "provenance",
+                ]:
                     if field in record:
                         data["brain"][field] = record[field]
+                apply_validity(data, record)
                 data["brain"]["shared_origin"] = {
                     "hash": digest(json_text(record)),
                     **record["origin"],

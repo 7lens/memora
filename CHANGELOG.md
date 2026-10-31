@@ -4,6 +4,38 @@ Record each public release here. Keep the tool version in `pyproject.toml` and `
 
 Every release must state its memory action. Minor and patch releases in one major series must say that no reconsolidation is needed. A major release must include ordered steps that an agent can apply to old memory. Keep each major procedure so an agent can migrate across more than one major release.
 
+## [1.6.1] - 2026-10-31
+
+- Memory action: `none`.
+- No reconsolidation is required. Existing memory remains readable.
+- Replace directory ownership with a kernel file lock that releases on process exit.
+- Support nested operations in one thread and preserve exclusion across threads, processes, and forked children.
+- Keep bounded waits, transaction recovery, and expected revision checks.
+- Archive a legacy lock only when the operating system confirms that its owner has stopped.
+- Keep the doctor cleanup option compatible without removing a kernel lock file.
+- Stop old long-running Memora clients before the update. Restart them with the installed version.
+
+## [1.6.0] - 2026-10-31
+
+- Memory action: `none`.
+- No reconsolidation is required. Existing memory remains readable.
+- Add a private live Obsidian vault inside each local workspace.
+- Synchronize new memory and editor changes with a local background process.
+- Keep expected revisions, immutable events, unknown metadata, and publication review rules.
+- Retain both versions of a conflict and require explicit resolution against the current revision.
+- Keep standard vault exports as separate snapshots. Knowledge Standard 1.0.0 does not change.
+
+## [1.5.0] - 2026-10-31
+
+- Memory action: `none`.
+- No reconsolidation is required. Existing memory remains readable.
+- Add Memora Knowledge Standard 1.0.0, schemas, a validator, and conformance fixtures.
+- Add JSON-LD/PROV-O exchange and Obsidian vault export for reviewed projections.
+- Retain provenance in new publication reviews. Keep existing v1 and v2 writers compatible.
+- Add private batch capture of extracted findings through CLI and MCP.
+- Retain sources, stable identities, expected revisions, and immutable events.
+- Add the portable remote profile, 7lens integration, and a real-task pilot protocol.
+
 ## [1.4.1] - 2026-10-16
 
 - Memory action: `none`.

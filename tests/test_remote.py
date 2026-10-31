@@ -280,3 +280,150 @@ def test_explicit_conflict_resolution_accepts_the_selected_remote_version(store)
     )
     assert store.read(path)[1].strip() == "The incoming change."
     assert not (store.cache / "remote-team-conflicts.json").exists()
+
+
+def test_pull_preserves_provenance_and_republication_restores_visibility(store):
+    remote = {"space": str(uuid.uuid4()), "cursor": 0, "baselines": {}}
+    save_config(store, {"team": remote})
+    first = entry()
+    first["record"]["provenance"] = {
+        "created_by": "agent:source",
+        "created_at": "2026-10-16T09:00:00Z",
+    }
+    apply_pull(store, "team", remote, [{"entry": first}], 1)
+    withdrawn = {**first, "revision": 2, "state": "withdrawn"}
+    apply_pull(store, "team", remote, [{"entry": withdrawn}], 2)
+    restored = {**first, "revision": 4}
+    older = {**first, "revision": 3}
+    # Select the highest version even if a provider returns rows out of order.
+    apply_pull(store, "team", remote, [{"entry": restored}, {"entry": older}], 4)
+    _, data, _ = k.find(store, first["id"])
+    assert data["brain"]["state"] == "provisional"
+    assert data["brain"]["provenance"] == first["record"]["provenance"]
+    assert remote["baselines"][first["id"]]["revision"] == 4
+    with pytest.raises(MemoraError, match="backwards"):
+        apply_pull(store, "team", remote, [], 3)
+
+
+def test_pull_rejects_draft_bodies_and_invalid_records_before_any_write(store):
+    remote = {"space": str(uuid.uuid4()), "cursor": 0, "baselines": {}}
+    first = entry()
+    first["state"] = "proposed"
+    with pytest.raises(MemoraError, match="entry"):
+        apply_pull(store, "team", remote, [{"entry": first}], 1)
+    assert list(k.notes(store)) == []
+    first["state"] = "published"
+    first["record"]["type"] = "Profile"
+    with pytest.raises(MemoraError):
+        apply_pull(store, "team", remote, [{"entry": first}], 1)
+    assert list(k.notes(store)) == []
+
+
+def test_pull_rejects_origin_rebinding_and_equal_revision_content_conflicts(store):
+    remote = {"space": str(uuid.uuid4()), "cursor": 0, "baselines": {}}
+    save_config(store, {"team": remote})
+    first = entry()
+    other = copy.deepcopy(first)
+    other["record"]["body"] = "Conflicting same-version content."
+    with pytest.raises(MemoraError, match="conflicting"):
+        apply_pull(store, "team", remote, [{"entry": first}, {"entry": other}], 1)
+    assert list(k.notes(store)) == []
+    apply_pull(store, "team", remote, [{"entry": first}], 1)
+    other = {**first, "revision": 2, "origin": str(uuid.uuid4())}
+    with pytest.raises(Conflict, match="origin"):
+        apply_pull(store, "team", remote, [{"entry": other}], 2)
+    assert remote["cursor"] == 1
+
+
+def test_push_retry_recovers_baselines_after_a_committed_idempotent_import(
+    store, monkeypatch
+):
+    from memora import remote as r, standard
+    from memora.cli import parser
+
+    space = str(uuid.uuid4())
+    note = store.create(
+        {"type": "Concept", "title": "Retry policy", "description": "Policy."},
+        "Retry safely.",
+        "agent:test",
+        "Keep the policy.",
+    )
+    p = k.propose(
+        store, note["path"], note["revision"], space, "Share the policy.", "agent:test"
+    )
+    k.approve(store, note["path"], p["revision"], "human:fixture", "Review the policy.")
+    config = {
+        "url": "http://127.0.0.1:1",
+        "space": space,
+        "local": True,
+        "cursor": 0,
+        "baselines": {},
+        "protocol": standard.FORMAT,
+    }
+    save_config(store, {"team": config})
+    package = standard.export_package(store, space)
+    row = {
+        "id": note["id"],
+        "record": package["records"][0],
+        "origin": package["origin"],
+        "revision": 3,
+        "relations": [],
+        "state": "published",
+    }
+
+    def respond(url, body=None, token=None):
+        if url.endswith("/imports"):
+            return {"items": [], "unchanged": 1, "cursor": 3}
+        assert url.endswith("/records/" + note["id"])
+        return row
+
+    monkeypatch.setattr(r, "request", respond)
+    r.dispatch(store, parser().parse_args(["remote", "push", "team"]))
+    base = read_config(store)["team"]["baselines"][note["id"]]
+    assert base["revision"] == 3
+    assert base["origin"] == package["origin"]
+    assert (
+        base["fingerprint"]
+        == store.read(note["path"])[0]["brain"]["publication"]["fingerprint"]
+    )
+
+
+def test_pull_refuses_a_non_advancing_paginated_feed(store, monkeypatch):
+    from memora import remote as r
+    from memora.cli import parser
+
+    save_config(
+        store,
+        {
+            "team": {
+                "url": "http://127.0.0.1:1",
+                "space": str(uuid.uuid4()),
+                "local": True,
+                "cursor": 0,
+                "baselines": {},
+            }
+        },
+    )
+    monkeypatch.setattr(
+        r, "request", lambda *_args, **_kwargs: {"items": [], "cursor": 0, "more": True}
+    )
+    with pytest.raises(MemoraError, match="advance"):
+        r.dispatch(store, parser().parse_args(["remote", "pull", "team"]))
+
+
+def test_remote_validity_reaches_retrieval_and_can_be_extended(store):
+    from memora.codec import score
+
+    remote = {"space": str(uuid.uuid4()), "cursor": 0, "baselines": {}}
+    save_config(store, {"team": remote})
+    first = entry()
+    first["record"]["provenance"] = {"valid_until": "2020-01-01T00:00:00Z"}
+    apply_pull(store, "team", remote, [{"entry": first}], 1)
+    _, metadata, body = k.find(store, first["id"])
+    assert score(metadata, body, at="2026-10-31T00:00:00Z")["stale"] is True
+    later = copy.deepcopy(first)
+    later["revision"] = 2
+    later["record"]["provenance"]["valid_until"] = "2030-01-01T00:00:00Z"
+    apply_pull(store, "team", remote, [{"entry": later}], 2)
+    _, metadata, body = k.find(store, first["id"])
+    assert score(metadata, body, at="2026-10-31T00:00:00Z")["stale"] is False

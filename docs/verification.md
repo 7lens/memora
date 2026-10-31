@@ -98,3 +98,59 @@ errors. Desktop and mobile screenshots show the Memora name. The fixture still h
 The local install uses `memora`. Editor instructions use `python -m memora` with the CLI transport.
 The memory reader accepts existing notes and version history. No memory reconsolidation is required.
 Original model study records retain their measured labels, prompts, responses, and checksums.
+
+## Memora 1.5 local implementation
+
+Memora 1.5 implements Knowledge Standard 1.0.0.
+The installed package passed 188 Python tests. RDFLib 7.5 parsed the JSON-LD graph and its PROV-O relations.
+Ruff checks and formatting passed. The public-tree check found no tracked personal memory.
+Language checks found no reported issues in the new standard guides. Reference coverage remains partial.
+These checks do not certify STE compliance.
+
+The current 7lens integration passed 1374 tests, with eight existing skips.
+The complete run used four workers to limit resource contention.
+Build, core build, typecheck, formatting, and the standard checks passed.
+The 17 standards tests passed. Source lint passed in a clean copy of tracked files and new task files.
+The direct local lint command also reads old ignored review artifacts; those artifacts still produce unrelated errors.
+
+A real Python CLI check used a disposable loopback 7lens API and two temporary memories.
+It checked preview, draft isolation, human publication, machine rejection, provenance, retries, authorized references, cross-language exports, conflicts, explicit resolution, and withdrawal history.
+The check used injected identities and an in-memory knowledge store.
+Managed graph tests cover Neo4j and Neptune session behavior. Live deployment acceptance remains separate.
+
+The first real-task reasoning pilot completed 12 model calls without execution errors.
+It used four project tasks, three context conditions, and one repetition.
+The runtime did not retain an exact served model ID. Total input counts did not maintain a fixed relationship to the empty controls.
+The report blocks a retrieval token-savings claim when those controls fail.
+Human quality review remains pending. The pilot does not establish a token, decision-quality, or productivity advantage.
+The private run artifacts remain under exports; they are not public memory or conformance fixtures.
+
+## Memora 1.6 live vault checks
+
+The installed Memora 1.6.0 package passed all 209 Python tests.
+The 21 live vault tests cover new memory, editor writes, private capture, revision conflicts, explicit resolution,
+unknown metadata, historical relations, invalid YAML, duplicate identities, renames, and crash recovery.
+They include a real background process and concurrent saves during projection replacement.
+Ruff lint and formatting passed. The public-tree check also covers the private vault directory.
+
+The local vault initialized with 127 knowledge notes. Initialization did not change any canonical Markdown file.
+All 61 typed links between those vault notes resolved to existing files.
+The local watcher started without pending issues. This check uses the file interface; it does not automate the Obsidian application.
+The background process needs another start after a computer restart. The adapter did not install a login service.
+
+## Memora 1.6.1 lock checks
+
+The installed package passed all 232 Python tests, including 23 lock tests.
+Ten earlier stress rounds passed 220 lock test executions. Each round checked process death,
+concurrent writers and readers, expected revisions, nested operations, legacy migration, and interrupted recovery.
+The final suite also checks that the doctor reports ownership separately from file presence.
+The suite retained two deprecation warnings: Python's warning for a fork in a process with threads,
+and RDFLib's existing graph warning. The checked macOS run executed every test.
+
+A reproduction used the initial published Store code and a legacy lock with a terminated owner.
+The old code returned a busy error after 10.020 seconds. The new code archived the legacy directory and acquired the lock in 0.003 seconds.
+These measurements describe that local run; they do not promise an acquisition time for other operations.
+
+The Chromium viewer passed 71 checks with no browser errors, including its 10,000-note fixture.
+Ruff lint, formatting, and the public-tree check passed. The local Obsidian worker restarted with the installed version.
+The tests cover the local filesystem and current host. They do not establish a guarantee against every storage or operating-system failure.

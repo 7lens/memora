@@ -241,14 +241,24 @@ def export_v2(store, destination):
 
     pkg = k.export_shared(store, destination)
     pkg["format"] = "context-knowledge-v2"
-    pkg["origin"] = identity(store)["brain_id"]
+    memory_identity = identity(store)
+    pkg["origin"] = memory_identity["brain_id"]
     origins = {
         i: v.get("origin")
         for r in read_config(store).values()
         for i, v in r.get("baselines", {}).items()
     }
     for record in pkg["records"]:
-        record["origin"]["brain"] = origins.get(record["id"]) or pkg["origin"]
+        path, data, _ = k.find(store, record["id"])
+        original = data["brain"].get("shared_origin") or data["brain"].get(
+            "remote_origin", {}
+        )
+        record["origin"]["brain"] = (
+            origins.get(record["id"])
+            or original.get("brain")
+            or memory_identity["notes"].get(path, "").partition(":")[0]
+            or pkg["origin"]
+        )
     return seal(pkg)
 
 
@@ -281,6 +291,39 @@ def recover(store):
 def apply_pull(store, name, remote, changes, cursor):
     """Stage all note and event writes. Keep local edits and incoming conflict data."""
     store.require_ignored_memory()
+    from .standard import schema
+    from jsonschema import Draft202012Validator, FormatChecker
+
+    record_validator = Draft202012Validator(
+        schema()["properties"]["records"]["items"], format_checker=FormatChecker()
+    )
+    if type(cursor) is not int or cursor < remote.get("cursor", 0):
+        raise MemoraError("The remote change cursor cannot move backwards.")
+    for change in changes:
+        entry = change.get("entry", {}) if isinstance(change, dict) else {}
+        try:
+            uuid.UUID(entry["id"])
+            uuid.UUID(entry["origin"])
+            if (
+                type(entry["revision"]) is not int
+                or entry["revision"] < 1
+                or entry["state"] not in {"published", "withdrawn"}
+                or entry["id"] != entry["record"]["id"]
+                or not record_validator.is_valid(entry["record"])
+                or not isinstance(entry["relations"], list)
+            ):
+                raise ValueError
+            for edge in entry["relations"]:
+                uuid.UUID(edge["id"])
+                uuid.UUID(edge["target"])
+                if (
+                    edge["origin"] != entry["id"]
+                    or edge["target"] == entry["id"]
+                    or edge["type"] not in store.relation_types()
+                ):
+                    raise ValueError
+        except (KeyError, ValueError, TypeError, AttributeError) as exc:
+            raise MemoraError("The published remote entry is not valid.") from exc
     with store.lock():
         recover(store)
         existing = {
@@ -293,7 +336,22 @@ def apply_pull(store, name, remote, changes, cursor):
         latest = {}
         for change in changes:
             entry = change["entry"]
-            if entry["revision"] > baselines.get(entry["id"], {}).get("revision", 0):
+            previous = latest.get(entry["id"])
+            if (
+                previous
+                and previous["revision"] == entry["revision"]
+                and previous != entry
+            ):
+                raise MemoraError("One remote revision has conflicting content.")
+            base = baselines.get(entry["id"], {})
+            if base.get("origin") and base["origin"] != entry["origin"]:
+                raise Conflict(
+                    "The remote record origin changed. Keep both identities for review."
+                )
+            if entry["revision"] > max(
+                baselines.get(entry["id"], {}).get("revision", 0),
+                latest.get(entry["id"], {}).get("revision", 0),
+            ):
                 latest[entry["id"]] = entry
         for identity, entry in latest.items():
             if identity not in existing:
@@ -349,11 +407,22 @@ def apply_pull(store, name, remote, changes, cursor):
                     }
                 for field in ["type", "title", "description", "sources"]:
                     data[field] = record[field]
-                for field in ["entity_kind", "observation", "external_refs"]:
+                for field in [
+                    "entity_kind",
+                    "observation",
+                    "external_refs",
+                    "provenance",
+                ]:
                     if field in record:
                         data["brain"][field] = record[field]
                     else:
                         data["brain"].pop(field, None)
+                k.apply_validity(data, record)
+                data["brain"]["remote_origin"] = {
+                    "brain": entry["origin"],
+                    "revision": record["origin"]["revision"],
+                    "review": record["review"],
+                }
                 data["brain"]["relations"] = [
                     {
                         "id": e["id"],
@@ -367,6 +436,8 @@ def apply_pull(store, name, remote, changes, cursor):
                 ]
                 if entry["state"] == "withdrawn":
                     data["brain"]["state"] = "discarded"
+                elif data["brain"].get("state") == "discarded":
+                    data["brain"]["state"] = "provisional"
                 if revision is None:
                     stage.create(
                         data,
@@ -436,12 +507,27 @@ def add_commands(sub):
     add.add_argument("--token-file")
     add.add_argument("--secret-file")
     add.add_argument("--local", action="store_true")
-    for action in ["login", "logout", "status", "push", "pull", "resolve"]:
+    add.add_argument(
+        "--protocol",
+        choices=["context-knowledge-v2", "memora-knowledge-v1"],
+        default="memora-knowledge-v1",
+    )
+    for action in [
+        "login",
+        "logout",
+        "status",
+        "push",
+        "pull",
+        "resolve",
+        "references",
+    ]:
         p = actions.add_parser(action)
         p.add_argument("name")
         if action == "resolve":
             p.add_argument("--id", required=True)
             p.add_argument("--take", choices=["local", "remote"], required=True)
+        if action == "references":
+            p.add_argument("--id", required=True)
         if action == "push":
             p.add_argument(
                 "--publish",
@@ -509,6 +595,7 @@ def dispatch(store, args):
             "local": args.local,
             "cursor": 0,
             "baselines": {},
+            "protocol": args.protocol,
         }
         for field in [
             "domain",
@@ -600,6 +687,12 @@ def dispatch(store, args):
         }
     credential = token(store, args.name, remote)
     base = remote["url"] + "/v1/knowledge/spaces/" + remote["space"]
+    if args.action == "references":
+        try:
+            identity = str(uuid.UUID(args.id))
+        except ValueError as exc:
+            raise MemoraError("Use a record UUID for reference resolution.") from exc
+        return request(base + "/records/" + identity + "/references", token=credential)
     if args.action == "status":
         spaces = request(remote["url"] + "/v1/knowledge/spaces", token=credential)
         return {
@@ -608,7 +701,12 @@ def dispatch(store, args):
             "cursor": remote["cursor"],
         }
     if args.action == "push":
-        package = export_v2(store, remote["space"])
+        if remote.get("protocol") == "memora-knowledge-v1":
+            from .standard import export_package
+
+            package = export_package(store, remote["space"])
+        else:
+            package = export_v2(store, remote["space"])
         result = request(
             base + "/imports",
             {
@@ -628,6 +726,33 @@ def dispatch(store, args):
                     "origin": item["origin"],
                     "fingerprint": data["brain"]["publication"]["fingerprint"],
                 }
+            for record in package["records"]:
+                if record["id"] in remote["baselines"]:
+                    continue
+                # A retry after a committed request can return only unchanged IDs.
+                item = request(base + "/records/" + record["id"], token=credential)
+                relations = [
+                    edge
+                    for edge in package["relations"]
+                    if edge["origin"] == record["id"]
+                ]
+                if (
+                    item.get("record") != record
+                    or item.get("relations") != relations
+                    or item.get("origin")
+                    != record["origin"].get("brain", package["origin"])
+                    or type(item.get("revision")) is not int
+                    or item["revision"] < 1
+                ):
+                    raise Conflict(
+                        "The committed remote content differs. Pull it for review."
+                    )
+                data, _ = existing[record["id"]]
+                remote["baselines"][record["id"]] = {
+                    "revision": item["revision"],
+                    "origin": item["origin"],
+                    "fingerprint": data["brain"]["publication"]["fingerprint"],
+                }
             save_config(store, config)
         return result
     changes, cursor = [], remote["cursor"]
@@ -636,12 +761,21 @@ def dispatch(store, args):
             base + "/changes?" + urlencode({"since": cursor, "limit": 100}),
             token=credential,
         )
+        if (
+            not isinstance(result, dict)
+            or not isinstance(result.get("items"), list)
+            or type(result.get("cursor")) is not int
+            or type(result.get("more")) is not bool
+            or result["cursor"] < cursor
+            or (result["more"] and result["cursor"] <= cursor)
+        ):
+            raise MemoraError("The remote change page does not advance a valid cursor.")
         changes.extend(result["items"])
         cursor = result["cursor"]
-        if not result["more"]:
-            break
         if len(changes) > 10000:
             raise MemoraError(
                 "The transfer exceeds 10000 changes. Select a smaller space."
             )
+        if not result["more"]:
+            break
     return apply_pull(store, args.name, remote, changes, cursor)

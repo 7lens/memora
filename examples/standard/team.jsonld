@@ -1,0 +1,288 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "memora": "urn:memora:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "id": "@id",
+    "type": "@type",
+    "title": "dcterms:title",
+    "description": "dcterms:description",
+    "body": "memora:body",
+    "record": {
+      "@id": "memora:record",
+      "@type": "@json"
+    },
+    "manifest": {
+      "@id": "memora:manifest",
+      "@type": "@json"
+    },
+    "source": {
+      "@id": "prov:wasDerivedFrom",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "author": {
+      "@id": "prov:wasAttributedTo",
+      "@type": "@id"
+    },
+    "created_at": {
+      "@id": "prov:generatedAtTime",
+      "@type": "xsd:dateTime"
+    },
+    "subject": {
+      "@id": "memora:subject",
+      "@type": "@id"
+    },
+    "object": {
+      "@id": "memora:object",
+      "@type": "@id"
+    },
+    "predicate": "memora:predicate",
+    "value": {
+      "@id": "memora:value",
+      "@type": "@json"
+    },
+    "basis": "memora:basis",
+    "relation_type": "memora:relation_type",
+    "reviewed_by": {
+      "@id": "prov:wasAssociatedWith",
+      "@type": "@id"
+    },
+    "reviewed_at": {
+      "@id": "prov:endedAtTime",
+      "@type": "xsd:dateTime"
+    },
+    "reviewed_record": {
+      "@id": "prov:used",
+      "@type": "@id"
+    },
+    "external_ref": {
+      "@id": "memora:external_ref",
+      "@type": "@json",
+      "@container": "@set"
+    },
+    "valid_until": {
+      "@id": "memora:valid_until",
+      "@type": "xsd:dateTime"
+    },
+    "belongs_to": {
+      "@id": "memora:belongs_to",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "depends_on": {
+      "@id": "memora:depends_on",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "supports": {
+      "@id": "memora:supports",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "contradicts": {
+      "@id": "memora:contradicts",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "replaces": {
+      "@id": "memora:replaces",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "explains": {
+      "@id": "memora:explains",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "documents": {
+      "@id": "memora:documents",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "implements": {
+      "@id": "memora:implements",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "validates": {
+      "@id": "memora:validates",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "derived_from": {
+      "@id": "memora:derived_from",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "related_to": {
+      "@id": "memora:related_to",
+      "@type": "@id",
+      "@container": "@set"
+    }
+  },
+  "@graph": [
+    {
+      "id": "urn:uuid:11111111-1111-4111-8111-111111111111#dataset",
+      "type": "memora:Dataset",
+      "manifest": {
+        "format": "memora-knowledge-v1",
+        "version": "1.0.0",
+        "origin": "11111111-1111-4111-8111-111111111111",
+        "destination": "22222222-2222-4222-8222-222222222222",
+        "sha256": "8f82fda8a488ae49c63bd5e2185523f7b648aae6d8efa175dad4f8fc989c97e3"
+      }
+    },
+    {
+      "id": "urn:uuid:33333333-3333-4333-8333-333333333333",
+      "type": [
+        "prov:Entity",
+        "memora:Entity"
+      ],
+      "title": "Example service",
+      "description": "A source-owned service.",
+      "body": "The source system owns the service definition.",
+      "source": [
+        "https://example.org/design"
+      ],
+      "record": {
+        "sources": [
+          {
+            "resource": "https://example.org/design"
+          }
+        ],
+        "origin": {
+          "workspace": "example-team",
+          "revision": 1,
+          "brain": "11111111-1111-4111-8111-111111111111"
+        },
+        "review": {
+          "by": "human:example-reviewer",
+          "at": "2026-10-31T10:00:00Z"
+        },
+        "provenance": {
+          "created_at": "2026-10-31T09:00:00Z",
+          "created_by": "agent:example",
+          "updated_at": "2026-10-31T09:00:00Z",
+          "updated_by": "agent:example"
+        },
+        "id": "33333333-3333-4333-8333-333333333333",
+        "type": "Entity",
+        "entity_kind": "service",
+        "title": "Example service",
+        "description": "A source-owned service.",
+        "body": "The source system owns the service definition.",
+        "external_refs": [
+          {
+            "provider": "7lens",
+            "instance": "example-installation",
+            "entity_type": "service",
+            "entity_id": "compute.virtual_machines",
+            "relation": "documents",
+            "observed_revision": "4"
+          }
+        ]
+      },
+      "author": "urn:memora:actor:agent%3Aexample",
+      "created_at": "2026-10-31T09:00:00Z",
+      "external_ref": [
+        {
+          "provider": "7lens",
+          "instance": "example-installation",
+          "entity_type": "service",
+          "entity_id": "compute.virtual_machines",
+          "relation": "documents",
+          "observed_revision": "4"
+        }
+      ]
+    },
+    {
+      "id": "urn:uuid:33333333-3333-4333-8333-333333333333#review-1",
+      "type": [
+        "prov:Activity",
+        "memora:PublicationReview"
+      ],
+      "reviewed_by": "urn:memora:actor:human%3Aexample-reviewer",
+      "reviewed_at": "2026-10-31T10:00:00Z",
+      "reviewed_record": "urn:uuid:33333333-3333-4333-8333-333333333333"
+    },
+    {
+      "id": "urn:uuid:44444444-4444-4444-8444-444444444444",
+      "type": [
+        "prov:Entity",
+        "memora:Decision"
+      ],
+      "title": "Keep source authority",
+      "description": "Link the source entity.",
+      "body": "Use an external reference because the source system owns the entity.",
+      "source": [
+        "https://example.org/design"
+      ],
+      "record": {
+        "sources": [
+          {
+            "resource": "https://example.org/design"
+          }
+        ],
+        "origin": {
+          "workspace": "example-team",
+          "revision": 1,
+          "brain": "11111111-1111-4111-8111-111111111111"
+        },
+        "review": {
+          "by": "human:example-reviewer",
+          "at": "2026-10-31T10:00:00Z"
+        },
+        "provenance": {
+          "created_at": "2026-10-31T09:00:00Z",
+          "created_by": "agent:example",
+          "updated_at": "2026-10-31T09:00:00Z",
+          "updated_by": "agent:example"
+        },
+        "id": "44444444-4444-4444-8444-444444444444",
+        "type": "Decision",
+        "title": "Keep source authority",
+        "description": "Link the source entity.",
+        "body": "Use an external reference because the source system owns the entity."
+      },
+      "author": "urn:memora:actor:agent%3Aexample",
+      "created_at": "2026-10-31T09:00:00Z",
+      "documents": [
+        "urn:uuid:33333333-3333-4333-8333-333333333333"
+      ]
+    },
+    {
+      "id": "urn:uuid:44444444-4444-4444-8444-444444444444#review-1",
+      "type": [
+        "prov:Activity",
+        "memora:PublicationReview"
+      ],
+      "reviewed_by": "urn:memora:actor:human%3Aexample-reviewer",
+      "reviewed_at": "2026-10-31T10:00:00Z",
+      "reviewed_record": "urn:uuid:44444444-4444-4444-8444-444444444444"
+    },
+    {
+      "id": "urn:uuid:55555555-5555-4555-8555-555555555555",
+      "type": "memora:Relation",
+      "subject": "urn:uuid:44444444-4444-4444-8444-444444444444",
+      "object": "urn:uuid:33333333-3333-4333-8333-333333333333",
+      "relation_type": "documents",
+      "record": {
+        "id": "55555555-5555-4555-8555-555555555555",
+        "origin": "44444444-4444-4444-8444-444444444444",
+        "target": "33333333-3333-4333-8333-333333333333",
+        "type": "documents"
+      }
+    },
+    {
+      "id": "urn:memora:actor:agent%3Aexample",
+      "type": "prov:Agent"
+    },
+    {
+      "id": "urn:memora:actor:human%3Aexample-reviewer",
+      "type": "prov:Agent"
+    }
+  ]
+}

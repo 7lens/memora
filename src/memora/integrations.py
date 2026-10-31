@@ -11,6 +11,7 @@ import tomlkit
 from pathlib import Path
 
 from .codec import MemoraError
+from .locking import is_locked
 from .store import Store, atomic
 
 BEGIN = "<!-- memora:start -->"
@@ -347,7 +348,7 @@ def doctor(store: Store, home: Path):
         "write_access": os.access(store.bundle, os.W_OK),
         "pending_transaction": (store.cache / "transaction.json").exists()
         or (store.cache / "import-transaction.json").exists(),
-        "write_lock": (store.cache / "write.lock").exists(),
+        "write_lock": is_locked(store.cache),
         "version": version_status(store),
         "editors": results,
         "installed_files": len(records),

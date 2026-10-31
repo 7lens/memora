@@ -7,6 +7,7 @@ exports/
 .DS_Store
 
 /knowledge/
+/obsidian/
 
 .ruff_cache/
 build/

@@ -181,6 +181,10 @@ def recover_import(store):
             )
     for entry in tx["writes"]:
         atomic(store.path(entry["path"]), entry["content"])
+    for entry in tx["writes"]:
+        if entry["path"].startswith("/events/"):
+            event, _ = load(entry["content"])
+            store.write_log(event["brain"], entry["path"])
     atomic(store.cache / "identity.json", json.dumps(tx["identity"], indent=2))
     from .compatibility import marker_path, record_baseline
 

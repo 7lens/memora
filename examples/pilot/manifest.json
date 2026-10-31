@@ -1,0 +1,10 @@
+{
+  "format": "memora-pilot-v1",
+  "seed": 42,
+  "repeats": 1,
+  "corpus": ["33333333-3333-4333-8333-333333333333", "44444444-4444-4444-8444-444444444444"],
+  "tasks": [
+    {"id": "reference-boundary", "category": "development", "prompt": "Explain how to link this service to its source without copying ownership.", "rubric": ["Use the external reference and installation identity.", "Keep source authority and require an authorized view."]},
+    {"id": "source-authority", "category": "decision", "prompt": "Should we copy the source-owned service into our memory? State the recorded choice and reason.", "rubric": ["Use a reference.", "Cite the recorded reason and source."]}
+  ]
+}

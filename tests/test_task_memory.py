@@ -178,6 +178,7 @@ def test_mcp_conversation_uses_same_service_and_receipts(store):
                     "get_note",
                     "remember",
                     "session_status",
+                    "ingest_findings",
                 }
                 started = await client.call_tool(
                     "start_task", {"cwd": str(store.root), "task": "platform rules"}
@@ -216,6 +217,32 @@ def test_mcp_conversation_uses_same_service_and_receipts(store):
                 )
                 assert not reported.isError
                 assert reported.structuredContent == status(store, session_id)
+                captured = await client.call_tool(
+                    "ingest_findings",
+                    {
+                        "session_id": session_id,
+                        "findings": {
+                            "format": "memora-findings-v1",
+                            "findings": [
+                                {
+                                    "type": "Fact",
+                                    "title": "Explicit membership source",
+                                    "description": "The source states the membership rule.",
+                                    "body": "The source defines explicit platform membership.",
+                                    "reason": "Keep the source finding.",
+                                    "sources": [{"resource": "urn:example:membership"}],
+                                }
+                            ],
+                        },
+                    },
+                )
+                assert not captured.isError
+                assert captured.structuredContent["saved"] == 1
+                finding = captured.structuredContent["results"][0]
+                metadata, _ = store.read(finding["path"])
+                assert metadata["brain"]["state"] == "provisional"
+                assert not metadata["brain"].get("publication")
+                assert not metadata.get("verified")
                 failed = await client.call_tool(
                     "get_note", {"path": "/nodes/missing.md", "session_id": session_id}
                 )

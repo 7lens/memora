@@ -170,6 +170,43 @@ brain:
       subject: User interface
       use: Technical noun. Use for the light or dark color choice.
 
+    JSON-LD:
+      definition: A JSON format for linked data with a term context.
+      subject: Data exchange
+      use: Standard name. Use version 1.1 and the pinned context.
+    PROV-O:
+      definition: The W3C ontology for provenance in RDF.
+      subject: Provenance
+      use: Standard name. Keep publication review separate from source verification.
+    provenance:
+      definition: The sources, actors, and changes from which a record came.
+      subject: Knowledge
+      use: Technical noun. A source label does not authenticate an actor.
+    conformance:
+      definition: Agreement with the stated schema and semantic rules.
+      subject: Standards
+      use: Technical noun. A test result does not certify a deployment.
+    vault:
+      definition: A directory of Markdown files that Obsidian can open.
+      subject: Data views
+      use: Technical noun. Distinguish a snapshot export from a live editable local view.
+    schema:
+      definition: A set of rules for the shape of structured data.
+      subject: Data validation
+      use: Technical noun. Apply semantic rules as well as schema checks.
+    manifest:
+      definition: A record that identifies the contents and version of a package or pilot.
+      subject: Data exchange
+      use: Technical noun. Keep the exact selected corpus and configuration.
+    ingestion:
+      definition: The validation and capture of extracted findings as private drafts.
+      subject: Agent capture
+      use: Technical noun. It does not imply publication or source verification.
+    namespace:
+      definition: A named boundary for identifiers or authorized content.
+      subject: Data
+      use: Technical noun. State whether the boundary concerns identity or access.
+
 ---
 # Technical terms
 

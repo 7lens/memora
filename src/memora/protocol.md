@@ -45,6 +45,14 @@ Agents can settle or discard notes on their own judgment. Record the reason. The
 
 Use `human:<id>` only for a user action that occurred. Do not invent sources, checks, independent evidence, or user confirmations.
 
+## Capture task findings
+
+At a material task milestone, extract sourced findings and decisions from the session and repository.
+Use `memora ingest findings --session SESSION --input FILE` or the MCP `ingest_findings` tool for a batch.
+Use the `memora-findings-v1` schema from `memora standard schema --profile ingestion`.
+Save conclusions and source references. Do not submit raw transcripts or credentials.
+These calls create private drafts. A human reviews the exact content before team publication.
+
 ## Retain task progress
 
 Use `memora checkpoint` with a session ID. Add a repository path for code work. Save the goal, progress, block, and next step.

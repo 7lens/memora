@@ -4,25 +4,25 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "memora"
-version = "1.4.1"
+version = "1.6.1"
 description = "Durable context and shared Markdown knowledge for agents."
 authors = [{name = "Devidfirz", email = "Devidfirz@7lens.io"}]
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
-dependencies = ["ruamel.yaml==0.19.1", "markdown-it-py==4.2.0", "tomlkit==0.15.1"]
+dependencies = ["ruamel.yaml==0.19.1", "markdown-it-py==4.2.0", "tomlkit==0.15.1", "jsonschema==4.26.0", "rfc8785==0.1.4"]
 
 [project.optional-dependencies]
 remote = ["rfc8785==0.1.4"]
 mcp = ["mcp==1.30.0"]
-test = ["rfc8785==0.1.4", "mcp==1.30.0", "pytest==9.1.1", "ruff==0.16.10"]
+test = ["rfc8785==0.1.4", "mcp==1.30.0", "pytest==9.1.1", "ruff==0.16.10", "rdflib==7.5.0"]
 semantic = ["sentence-transformers==5.7.0"]
 
 [project.scripts]
 memora = "memora.cli:main"
 
 [tool.setuptools.package-data]
-memora = ["viewer.html", "protocol.md", "knowledge.schema.json", "knowledge.remote.schema.json"]
+memora = ["viewer.html", "protocol.md", "*.schema.json", "standard.context.jsonld"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -17,6 +17,11 @@ class MemoryService:
     def __init__(self, store):
         self.store = store
 
+    def ingest(self, session_id, findings, preview=False):
+        from .ingestion import ingest
+
+        return ingest(self.store, session_id, findings, preview)
+
     def context(
         self,
         task,
@@ -150,6 +155,7 @@ class MemoryService:
             "Document",
             "System",
             "Profile",
+            "Source",
         }:
             raise MemoraError("Save knowledge here. Use checkpoint for task progress.")
         if not all(

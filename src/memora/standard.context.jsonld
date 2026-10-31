@@ -1,0 +1,126 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "memora": "urn:memora:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "id": "@id",
+    "type": "@type",
+    "title": "dcterms:title",
+    "description": "dcterms:description",
+    "body": "memora:body",
+    "record": {
+      "@id": "memora:record",
+      "@type": "@json"
+    },
+    "manifest": {
+      "@id": "memora:manifest",
+      "@type": "@json"
+    },
+    "source": {
+      "@id": "prov:wasDerivedFrom",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "author": {
+      "@id": "prov:wasAttributedTo",
+      "@type": "@id"
+    },
+    "created_at": {
+      "@id": "prov:generatedAtTime",
+      "@type": "xsd:dateTime"
+    },
+    "subject": {
+      "@id": "memora:subject",
+      "@type": "@id"
+    },
+    "object": {
+      "@id": "memora:object",
+      "@type": "@id"
+    },
+    "predicate": "memora:predicate",
+    "value": {
+      "@id": "memora:value",
+      "@type": "@json"
+    },
+    "basis": "memora:basis",
+    "relation_type": "memora:relation_type",
+    "reviewed_by": {
+      "@id": "prov:wasAssociatedWith",
+      "@type": "@id"
+    },
+    "reviewed_at": {
+      "@id": "prov:endedAtTime",
+      "@type": "xsd:dateTime"
+    },
+    "reviewed_record": {
+      "@id": "prov:used",
+      "@type": "@id"
+    },
+    "external_ref": {
+      "@id": "memora:external_ref",
+      "@type": "@json",
+      "@container": "@set"
+    },
+    "valid_until": {
+      "@id": "memora:valid_until",
+      "@type": "xsd:dateTime"
+    },
+    "belongs_to": {
+      "@id": "memora:belongs_to",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "depends_on": {
+      "@id": "memora:depends_on",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "supports": {
+      "@id": "memora:supports",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "contradicts": {
+      "@id": "memora:contradicts",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "replaces": {
+      "@id": "memora:replaces",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "explains": {
+      "@id": "memora:explains",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "documents": {
+      "@id": "memora:documents",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "implements": {
+      "@id": "memora:implements",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "validates": {
+      "@id": "memora:validates",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "derived_from": {
+      "@id": "memora:derived_from",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "related_to": {
+      "@id": "memora:related_to",
+      "@type": "@id",
+      "@container": "@set"
+    }
+  }
+}

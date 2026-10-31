@@ -8,7 +8,7 @@ import sys
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
     result = subprocess.run(
-        ["git", "ls-files", "--cached", "knowledge"],
+        ["git", "ls-files", "--cached", "knowledge", "obsidian"],
         cwd=root,
         capture_output=True,
         text=True,

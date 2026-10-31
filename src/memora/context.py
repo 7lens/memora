@@ -305,7 +305,7 @@ def _build_packet(
         section += "Evidence: " + " ".join(node["reasons"]) + "\n"
         if excerpt:
             section += excerpt + (
-                "\nExcerpt only. Use get_note or brain show for full content.\n"
+                "\nExcerpt only. Use get_note or memora show for full content.\n"
                 if excerpt != body
                 else "\n"
             )

@@ -126,6 +126,24 @@ memora view
 
 The live graph and list use the same filters for projects, repositories, types, knowledge states, and evidence scores. Search also checks tags and source names. The list sorts by each column and shows 50 notes per page. The graph groups notes by project or repository. Notes without a project or repository appear in the shared group.
 
+## Open knowledge standard
+
+Read [Memora Knowledge Standard 1.0.0](docs/standard/README.md) for the public format, node catalog,
+JSON-LD/PROV-O mapping, conformance rules, and compatibility policy.
+Use `memora standard export --destination TEAM --format obsidian --output /private/vault`
+to create an Obsidian vault without a plugin.
+The [capture guide](docs/standard/ingestion.md) defines private batch ingestion from agent conclusions.
+The [remote profile](docs/standard/remote.md) defines authenticated team synchronization with 7lens.
+
+## Use Obsidian as a local editor
+
+Run `memora obsidian start` to create and monitor a private `obsidian/` vault inside this project.
+Open that directory as a vault in Obsidian. New memory appears automatically while the process runs.
+Edits and new notes in `Notes/` use normal Memora writes, revisions, and history.
+Git ignores the vault. Edits do not approve team publication or verify evidence.
+Run `memora obsidian status` for pending conflicts and `memora obsidian stop` to stop synchronization.
+Start the process again after a computer restart. Read the [live vault guide](docs/obsidian.md) for editing and conflict resolution.
+
 ## Knowledge format
 
 `knowledge/` is an OKF 0.2 bundle. Each note has YAML frontmatter. Each change has an immutable event. `index.md` and `log.md` support navigation.
@@ -164,7 +182,10 @@ memora reindex
 
 Do not remove a pending transaction. `memora doctor` completes recovery when the current content permits it. A conflicting external edit stops recovery.
 
-Use `memora doctor --clear-dead-lock` only when the lock owner has stopped. The command does not remove a live lock.
+The memory uses a kernel file lock. Process exit releases ownership automatically, including a forced termination.
+The file `.brain/write.lock` remains on disk; its presence does not mean that memory is busy.
+Never delete or replace that file while Memora runs. `memora doctor --clear-dead-lock` remains a compatible recovery command; it does not remove the file.
+Stop old long-running clients before an update. Read the [locking guide](docs/locking.md) for migration and diagnostics.
 
 Use explicit Git commands to save and share the repository. The CLI does not make commits or push changes.
 
